@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
   }
   host = argv[1];
   num1 = atof(argv[2]);
-  operator= argv[3][0];
+  operator= * argv[3];
   num2 = atof(argv[4]);
 
   calculator_1(host, num1, operator, num2);

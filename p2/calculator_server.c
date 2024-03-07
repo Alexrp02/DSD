@@ -15,6 +15,7 @@ calculator_res *calculate_1_svc(float num1, char operator, float num2,
    * insert server code here
    */
   printf("Llamada para operación %f %c %f\n", num1, operator, num2);
+  result.errnum = 0;
   switch (operator) {
   case '+':
     result.calculator_res_u.result = num1 + num2;
