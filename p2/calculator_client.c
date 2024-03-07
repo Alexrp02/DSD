@@ -39,15 +39,19 @@ void calculator_1(char *host, float num1, char operator, float num2) {
 
 int main(int argc, char *argv[]) {
   char *host;
-  float num1 = atof(argv[2]);
-  char operator= * argv[3];
-  float num2 = atof(argv[4]);
+  float num1;
+  char operator;
+  float num2;
 
   if (argc != 5) {
     printf("Uso del programa: %s host num1 operator num2\n", argv[0]);
     exit(1);
   }
   host = argv[1];
+  num1 = atof(argv[2]);
+  operator= argv[3][0];
+  num2 = atof(argv[4]);
+
   calculator_1(host, num1, operator, num2);
   exit(0);
 }
