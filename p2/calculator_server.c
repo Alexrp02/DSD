@@ -23,7 +23,7 @@ calculator_res *calculate_1_svc(float num1, char operator, float num2,
   case '-':
     result.calculator_res_u.result = num1 - num2;
     break;
-  case '*':
+  case 'x':
     result.calculator_res_u.result = num1 * num2;
     break;
   case '/':
