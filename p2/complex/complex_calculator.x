@@ -1,9 +1,9 @@
 /* Program for a calculator with more complex operations such as array operations */
 
-typedef int vector_operando<10>;
+typedef float vector_operando<10>;
 
 union complex_calculator_res switch (int errnum) {
-		case 0: int res<10>;
+		case 0: float res<10>;
 		default: void;
 	};
 

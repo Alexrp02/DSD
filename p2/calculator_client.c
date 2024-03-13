@@ -37,6 +37,34 @@ void calculator_1(char *host, float num1, char operator, float num2) {
 #endif /* DEBUG */
 }
 
+void complex_calculator_1(char *host, vector_operando vec1, char operator,
+                          vector_operando vec2) {
+  CLIENT *clnt;
+  complex_calculator_res *result_1;
+
+#ifndef DEBUG
+  clnt = clnt_create(host, CALCULATOR, CALVER, "udp");
+  if (clnt == NULL) {
+    clnt_pcreateerror(host);
+    exit(1);
+  }
+#endif /* DEBUG */
+
+  result_1 = complex_calculate_1(vec1, operator, vec2, clnt);
+  if (result_1 == (calculator_res *)NULL) {
+    clnt_perror(clnt, "call failed");
+  }
+
+  if (result_1->errnum != 0) {
+    printf("Error, not a valid operation: %d\n", result_1->errnum);
+    exit(1);
+  }
+
+#ifndef DEBUG
+  clnt_destroy(clnt);
+#endif /* DEBUG */
+}
+
 int main(int argc, char *argv[]) {
   char *host;
   float num1;
@@ -56,6 +84,13 @@ int main(int argc, char *argv[]) {
   printf("Ingrese el segundo número: ");
   scanf("%f", &num2);
 
+  vector_operando vector_operando;
+  vector_operando.vector_operando_val = (float *)malloc(2 * sizeof(float));
+  vector_operando.vector_operando_len = 2;
+  vector_operando.vector_operando_val[0] = num1;
+  vector_operando.vector_operando_val[1] = num2;
+
   calculator_1(host, num1, operator, num2);
+  complex_calculator_1(host, vector_operando, operator, vector_operando);
   exit(0);
 }

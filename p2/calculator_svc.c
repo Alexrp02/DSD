@@ -22,11 +22,18 @@ _calculate_1 (calculate_1_argument *argp, struct svc_req *rqstp)
 	return (calculate_1_svc(argp->arg1, argp->arg2, argp->arg3, rqstp));
 }
 
+static complex_calculator_res *
+_complex_calculate_1 (complex_calculate_1_argument *argp, struct svc_req *rqstp)
+{
+	return (complex_calculate_1_svc(argp->arg1, argp->arg2, argp->arg3, rqstp));
+}
+
 static void
 calculator_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
 	union {
 		calculate_1_argument calculate_1_arg;
+		complex_calculate_1_argument complex_calculate_1_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -41,6 +48,12 @@ calculator_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		_xdr_argument = (xdrproc_t) xdr_calculate_1_argument;
 		_xdr_result = (xdrproc_t) xdr_calculator_res;
 		local = (char *(*)(char *, struct svc_req *)) _calculate_1;
+		break;
+
+	case COMPLEX_CALCULATE:
+		_xdr_argument = (xdrproc_t) xdr_complex_calculate_1_argument;
+		_xdr_result = (xdrproc_t) xdr_complex_calculator_res;
+		local = (char *(*)(char *, struct svc_req *)) _complex_calculate_1;
 		break;
 
 	default:
