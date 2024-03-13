@@ -30,7 +30,7 @@ void calculator_1(char *host, float num1, char operator, float num2) {
     exit(1);
   }
 
-  printf("Result: %f\n", result_1->calculator_res_u.result);
+  printf("Resultado: %f\n", result_1->calculator_res_u.result);
 
 #ifndef DEBUG
   clnt_destroy(clnt);
@@ -43,14 +43,18 @@ int main(int argc, char *argv[]) {
   char operator;
   float num2;
 
-  if (argc != 5) {
-    printf("Uso del programa: %s host num1 operator num2\n", argv[0]);
+  if (argc != 2) {
+    printf("Uso del programa: %s host\n", argv[0]);
     exit(1);
   }
   host = argv[1];
-  num1 = atof(argv[2]);
-  operator= * argv[3];
-  num2 = atof(argv[4]);
+
+  printf("Ingrese el primer número: ");
+  scanf("%f", &num1);
+  printf("Ingrese el operador (+, -, x, /): ");
+  scanf(" %c", &operator);
+  printf("Ingrese el segundo número: ");
+  scanf("%f", &num2);
 
   calculator_1(host, num1, operator, num2);
   exit(0);
