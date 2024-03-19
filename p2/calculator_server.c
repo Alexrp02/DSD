@@ -51,3 +51,13 @@ complex_calculator_res *complex_calculate_1_svc(vector_operando arg1,
   result.errnum = 0;
   return &result;
 }
+
+complex_calculator_res *complex_calculate_2_svc(vector_operando arg1,
+                                                char operator, float arg2,
+                                                struct svc_req *rqstp) {
+  printf("Función demasiado compleja para este servidor, llamando a servidor "
+         "más capacitado.\n");
+  static complex_calculator_res result;
+  result.errnum = 0;
+  return &result;
+}

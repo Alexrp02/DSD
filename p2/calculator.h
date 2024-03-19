@@ -52,6 +52,13 @@ struct complex_calculate_1_argument {
 };
 typedef struct complex_calculate_1_argument complex_calculate_1_argument;
 
+struct complex_calculate_2_argument {
+	vector_operando arg1;
+	char arg2;
+	float arg3;
+};
+typedef struct complex_calculate_2_argument complex_calculate_2_argument;
+
 #define CALCULATOR 0x20000001
 #define CALVER 1
 
@@ -73,6 +80,18 @@ extern  complex_calculator_res * complex_calculate_1();
 extern  complex_calculator_res * complex_calculate_1_svc();
 extern int calculator_1_freeresult ();
 #endif /* K&R C */
+#define CALVER2 2
+
+#if defined(__STDC__) || defined(__cplusplus)
+extern  complex_calculator_res * complex_calculate_2(vector_operando , char , float , CLIENT *);
+extern  complex_calculator_res * complex_calculate_2_svc(vector_operando , char , float , struct svc_req *);
+extern int calculator_2_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
+
+#else /* K&R C */
+extern  complex_calculator_res * complex_calculate_2();
+extern  complex_calculator_res * complex_calculate_2_svc();
+extern int calculator_2_freeresult ();
+#endif /* K&R C */
 
 /* the xdr functions */
 
@@ -82,6 +101,7 @@ extern  bool_t xdr_calculator_res (XDR *, calculator_res*);
 extern  bool_t xdr_complex_calculator_res (XDR *, complex_calculator_res*);
 extern  bool_t xdr_calculate_1_argument (XDR *, calculate_1_argument*);
 extern  bool_t xdr_complex_calculate_1_argument (XDR *, complex_calculate_1_argument*);
+extern  bool_t xdr_complex_calculate_2_argument (XDR *, complex_calculate_2_argument*);
 
 #else /* K&R C */
 extern bool_t xdr_vector_operando ();
@@ -89,6 +109,7 @@ extern bool_t xdr_calculator_res ();
 extern bool_t xdr_complex_calculator_res ();
 extern bool_t xdr_calculate_1_argument ();
 extern bool_t xdr_complex_calculate_1_argument ();
+extern bool_t xdr_complex_calculate_2_argument ();
 
 #endif /* K&R C */
 

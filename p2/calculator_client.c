@@ -5,6 +5,7 @@
  */
 
 #include "calculator.h"
+#include "rpc/types.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -106,11 +107,41 @@ void complex_calculator_1(char *host, vector_operando vec1, char operator,
 #endif /* DEBUG */
 }
 
+void complex_calculator_2(char *host, vector_operando vec1, char operator,
+                          float number) {
+  CLIENT *clnt;
+  complex_calculator_res *result_1;
+
+#ifndef DEBUG
+  clnt = clnt_create(host, CALCULATOR, CALVER, "udp");
+  if (clnt == NULL) {
+    clnt_pcreateerror(host);
+    exit(1);
+  }
+#endif /* DEBUG */
+
+  result_1 = complex_calculate_2(vec1, operator, number, clnt);
+  if (result_1 == (calculator_res *)NULL) {
+    clnt_perror(clnt, "call failed");
+  }
+
+  if (result_1->errnum != 0) {
+    printf("Error, not a valid operation: %d\n", result_1->errnum);
+    exit(1);
+  }
+
+#ifndef DEBUG
+  clnt_destroy(clnt);
+#endif /* DEBUG */
+}
+
 int main(int argc, char *argv[]) {
   char *host;
-  float num1;
+  char num1[100];
   char operator;
-  float num2;
+  char num2[100];
+  bool_t first_is_vector = FALSE;
+  bool_t second_is_vector = FALSE;
 
   if (argc != 2) {
     printf("Uso del programa: %s host\n", argv[0]);
@@ -118,20 +149,56 @@ int main(int argc, char *argv[]) {
   }
   host = argv[1];
 
-  printf("Ingrese el primer número o vector: ");
-  scanf("%f", &num1);
-  printf("Ingrese el operador (+, -, x, /): ");
+  printf("Ingrese el primer número o vector: \n");
+  scanf("%[^\n]s", num1);
+  printf("El primer número o vector es: %s\n", num1);
+  printf("Ingrese el operador (+, -, x, /): \n");
   scanf(" %c", &operator);
-  printf("Ingrese el segundo número o vector: ");
-  scanf("%f", &num2);
+  printf("El operador es: %c\n", operator);
+  printf("Ingrese el segundo número o vector: \n");
+  scanf(" %[^\n]s", num2);
+  vector_operando vec_operando1;
+  vector_operando vec_operando2;
+  float operando1;
+  float operando2;
 
-  vector_operando vector_operando;
-  vector_operando.vector_operando_val = (float *)malloc(2 * sizeof(float));
-  vector_operando.vector_operando_len = 2;
-  vector_operando.vector_operando_val[0] = num1;
-  vector_operando.vector_operando_val[1] = num2;
+  switch (num1[0]) {
+  case '[':
+    vec_operando1 = parseArray(num1);
+    first_is_vector = TRUE;
+    break;
+  default:
+    operando1 = atof(num1);
+    break;
+  }
 
-  calculator_1(host, num1, operator, num2);
-  complex_calculator_1(host, vector_operando, operator, vector_operando);
-  exit(0);
+  switch (num2[0]) {
+  case '[':
+    vec_operando2 = parseArray(num2);
+    second_is_vector = TRUE;
+    break;
+  default:
+    operando2 = atof(num2);
+    break;
+  }
+
+  if (!first_is_vector && !second_is_vector) {
+    printf("Operandos no vectores, llamando para función simple\n");
+    calculator_1(host, operando1, operator, operando2);
+    exit(0);
+  } else if (first_is_vector && second_is_vector) {
+    printf("Operandos vectores, llamando para función compleja\n");
+    complex_calculator_1(host, vec_operando1, operator, vec_operando2);
+    exit(0);
+  } else if (first_is_vector) {
+    printf("Primer operando vector, llamando para función compleja\n");
+    complex_calculator_2(host, vec_operando1, operator, operando2);
+    exit(0);
+  } else if (second_is_vector) {
+    printf("Segundo operando vector, llamando para función compleja\n");
+    complex_calculator_2(host, vec_operando2, operator, operando1);
+    exit(0);
+  }
+
+  //
 }

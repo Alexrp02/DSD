@@ -76,3 +76,15 @@ xdr_complex_calculate_1_argument (XDR *xdrs, complex_calculate_1_argument *objp)
 		 return FALSE;
 	return TRUE;
 }
+
+bool_t
+xdr_complex_calculate_2_argument (XDR *xdrs, complex_calculate_2_argument *objp)
+{
+	 if (!xdr_vector_operando (xdrs, &objp->arg1))
+		 return FALSE;
+	 if (!xdr_char (xdrs, &objp->arg2))
+		 return FALSE;
+	 if (!xdr_float (xdrs, &objp->arg3))
+		 return FALSE;
+	return TRUE;
+}

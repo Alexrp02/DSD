@@ -28,6 +28,12 @@ _complex_calculate_1 (complex_calculate_1_argument *argp, struct svc_req *rqstp)
 	return (complex_calculate_1_svc(argp->arg1, argp->arg2, argp->arg3, rqstp));
 }
 
+static complex_calculator_res *
+_complex_calculate_2 (complex_calculate_2_argument *argp, struct svc_req *rqstp)
+{
+	return (complex_calculate_2_svc(argp->arg1, argp->arg2, argp->arg3, rqstp));
+}
+
 static void
 calculator_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
@@ -76,12 +82,54 @@ calculator_1(struct svc_req *rqstp, register SVCXPRT *transp)
 	return;
 }
 
+static void
+calculator_2(struct svc_req *rqstp, register SVCXPRT *transp)
+{
+	union {
+		complex_calculate_2_argument complex_calculate_2_arg;
+	} argument;
+	char *result;
+	xdrproc_t _xdr_argument, _xdr_result;
+	char *(*local)(char *, struct svc_req *);
+
+	switch (rqstp->rq_proc) {
+	case NULLPROC:
+		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
+		return;
+
+	case COMPLEX_CALCULATE:
+		_xdr_argument = (xdrproc_t) xdr_complex_calculate_2_argument;
+		_xdr_result = (xdrproc_t) xdr_complex_calculator_res;
+		local = (char *(*)(char *, struct svc_req *)) _complex_calculate_2;
+		break;
+
+	default:
+		svcerr_noproc (transp);
+		return;
+	}
+	memset ((char *)&argument, 0, sizeof (argument));
+	if (!svc_getargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		svcerr_decode (transp);
+		return;
+	}
+	result = (*local)((char *)&argument, rqstp);
+	if (result != NULL && !svc_sendreply(transp, (xdrproc_t) _xdr_result, result)) {
+		svcerr_systemerr (transp);
+	}
+	if (!svc_freeargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		fprintf (stderr, "%s", "unable to free arguments");
+		exit (1);
+	}
+	return;
+}
+
 int
 main (int argc, char **argv)
 {
 	register SVCXPRT *transp;
 
 	pmap_unset (CALCULATOR, CALVER);
+	pmap_unset (CALCULATOR, CALVER2);
 
 	transp = svcudp_create(RPC_ANYSOCK);
 	if (transp == NULL) {
@@ -92,6 +140,10 @@ main (int argc, char **argv)
 		fprintf (stderr, "%s", "unable to register (CALCULATOR, CALVER, udp).");
 		exit(1);
 	}
+	if (!svc_register(transp, CALCULATOR, CALVER2, calculator_2, IPPROTO_UDP)) {
+		fprintf (stderr, "%s", "unable to register (CALCULATOR, CALVER2, udp).");
+		exit(1);
+	}
 
 	transp = svctcp_create(RPC_ANYSOCK, 0, 0);
 	if (transp == NULL) {
@@ -100,6 +152,10 @@ main (int argc, char **argv)
 	}
 	if (!svc_register(transp, CALCULATOR, CALVER, calculator_1, IPPROTO_TCP)) {
 		fprintf (stderr, "%s", "unable to register (CALCULATOR, CALVER, tcp).");
+		exit(1);
+	}
+	if (!svc_register(transp, CALCULATOR, CALVER2, calculator_2, IPPROTO_TCP)) {
+		fprintf (stderr, "%s", "unable to register (CALCULATOR, CALVER2, tcp).");
 		exit(1);
 	}
 
