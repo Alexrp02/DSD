@@ -8,6 +8,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int getArrayLength(char *input) {
+  int count = 0;
+  for (int i = 0; input[i] != '\0'; i++) {
+    if (input[i] == ',' || input[i] == ']') {
+      count++;
+    }
+  }
+  return count;
+}
+
+vector_operando parseArray(char *input) {
+  int count = 0;
+  int *array = NULL;
+  vector_operando op;
+
+  count = getArrayLength(input);
+  op.vector_operando_len = count;
+  printf("Vector con tamaño: %d\n", op.vector_operando_len);
+
+  // Allocate memory for the array
+  array = (int *)malloc(count * sizeof(int));
+
+  // Parse the array elements
+  int index = 0;
+  int num = 0;
+  sscanf(input, "[%d", &num);
+  array[index++] = num;
+  for (int i = 1; input[i] != '\0'; i++) {
+    if (input[i] == ',' || input[i] == ']') {
+      if (input[i] == ',') {
+        sscanf(input + i + 1, "%d", &num);
+        array[index++] = num;
+      }
+      i++;
+    }
+  }
+
+  op.vector_operando_val = array;
+  return op;
+}
+
 void calculator_1(char *host, float num1, char operator, float num2) {
   CLIENT *clnt;
   calculator_res *result_1;
@@ -77,11 +118,11 @@ int main(int argc, char *argv[]) {
   }
   host = argv[1];
 
-  printf("Ingrese el primer número: ");
+  printf("Ingrese el primer número o vector: ");
   scanf("%f", &num1);
   printf("Ingrese el operador (+, -, x, /): ");
   scanf(" %c", &operator);
-  printf("Ingrese el segundo número: ");
+  printf("Ingrese el segundo número o vector: ");
   scanf("%f", &num2);
 
   vector_operando vector_operando;
