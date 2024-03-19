@@ -20,14 +20,14 @@ int getArrayLength(char *input) {
   return count;
 }
 
-vector_operando parseArray(char *input) {
+vector_operando2 parseArray(char *input) {
   int count = 0;
   int *array = NULL;
-  vector_operando op;
+  vector_operando2 op;
 
   count = getArrayLength(input);
-  op.vector_operando_len = count;
-  printf("Vector con tamaño: %d\n", op.vector_operando_len);
+  op.vector_operando2_len = count;
+  printf("Vector con tamaño: %d\n", op.vector_operando2_len);
 
   // Allocate memory for the array
   array = (int *)malloc(count * sizeof(int));
@@ -47,14 +47,14 @@ vector_operando parseArray(char *input) {
     }
   }
 
-  op.vector_operando_val = array;
+  op.vector_operando2_val = array;
   return op;
 }
 
-void complex_calculator_1(char *host, vector_operando op1, char operator,
-                          vector_operando op2) {
+void complex_calculator_1(char *host, vector_operando2 op1, char operator,
+                          vector_operando2 op2) {
   CLIENT *clnt;
-  complex_calculator_res *result_1;
+  complex_calculator_res2 *result_1;
 
 #ifndef DEBUG
   clnt = clnt_create(host, COMPLEX_CALCULATOR, CCALVER, "udp");
@@ -64,20 +64,20 @@ void complex_calculator_1(char *host, vector_operando op1, char operator,
   }
 #endif /* DEBUG */
 
-  result_1 = calculate_1(op1, operator, op2, clnt);
-  if (result_1 == (complex_calculator_res *)NULL) {
+  result_1 = calculate_complex_1(op1, operator, op2, clnt);
+  if (result_1 == (complex_calculator_res2 *)NULL) {
     clnt_perror(clnt, "call failed");
   } else if (result_1->errnum != 0) {
     printf("Error: %d\n", result_1->errnum);
   }
 
   printf("Resultado: ");
-  for (int i = 0; i < result_1->complex_calculator_res_u.res.res_len; i++) {
-    printf("%d ", result_1->complex_calculator_res_u.res.res_val[i]);
+  for (int i = 0; i < result_1->complex_calculator_res2_u.res.res_len; i++) {
+    printf("%d ", result_1->complex_calculator_res2_u.res.res_val[i]);
   }
   printf("\n");
 
-  free(result_1->complex_calculator_res_u.res.res_val);
+  free(result_1->complex_calculator_res2_u.res.res_val);
 #ifndef DEBUG
   clnt_destroy(clnt);
 #endif /* DEBUG */
@@ -98,19 +98,19 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  vector_operando op1 = parseArray(argv[2]);
+  vector_operando2 op1 = parseArray(argv[2]);
   printf("Primer vector: ");
-  for (int i = 0; i < op1.vector_operando_len; i++) {
-    printf("%d ", op1.vector_operando_val[i]);
+  for (int i = 0; i < op1.vector_operando2_len; i++) {
+    printf("%d ", op1.vector_operando2_val[i]);
   }
-  vector_operando op2 = parseArray(argv[4]);
+  vector_operando2 op2 = parseArray(argv[4]);
 
   host = argv[1];
   complex_calculator_1(host, op1, argv[3][0], op2);
 
   // Free the memory allocated for the vectors
-  free(op1.vector_operando_val);
-  free(op2.vector_operando_val);
+  free(op1.vector_operando2_val);
+  free(op2.vector_operando2_val);
 
   exit(0);
 }

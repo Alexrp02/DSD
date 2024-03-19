@@ -9,18 +9,18 @@
 /* Default timeout can be changed using clnt_control() */
 static struct timeval TIMEOUT = { 25, 0 };
 
-complex_calculator_res *
-calculate_1(vector_operando arg1, char arg2, vector_operando arg3,  CLIENT *clnt)
+complex_calculator_res2 *
+calculate_complex_1(vector_operando2 arg1, char arg2, vector_operando2 arg3,  CLIENT *clnt)
 {
-	calculate_1_argument arg;
-	static complex_calculator_res clnt_res;
+	calculate_complex_1_argument arg;
+	static complex_calculator_res2 clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
 	arg.arg1 = arg1;
 	arg.arg2 = arg2;
 	arg.arg3 = arg3;
-	if (clnt_call (clnt, CALCULATE, (xdrproc_t) xdr_calculate_1_argument, (caddr_t) &arg,
-		(xdrproc_t) xdr_complex_calculator_res, (caddr_t) &clnt_res,
+	if (clnt_call (clnt, CALCULATE_COMPLEX, (xdrproc_t) xdr_calculate_complex_1_argument, (caddr_t) &arg,
+		(xdrproc_t) xdr_complex_calculator_res2, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}

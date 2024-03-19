@@ -7,18 +7,19 @@
 #include "complex_calculator.h"
 #include <stdio.h>
 
-complex_calculator_res *calculate_1_svc(vector_operando op1, char operator,
-                                        vector_operando op3,
-                                        struct svc_req *rqstp) {
-  static complex_calculator_res result;
-  result.complex_calculator_res_u.res.res_val =
-      (int *)malloc(op1.vector_operando_len * sizeof(int));
-  result.complex_calculator_res_u.res.res_len = op1.vector_operando_len;
+complex_calculator_res2 *calculate_complex_1_svc(vector_operando2 op1,
+                                                 char operator,
+                                                 vector_operando2 op3,
+                                                 struct svc_req *rqstp) {
+  static complex_calculator_res2 result;
+  result.complex_calculator_res2_u.res.res_val =
+      (int *)malloc(op1.vector_operando2_len * sizeof(int));
+  result.complex_calculator_res2_u.res.res_len = op1.vector_operando2_len;
 
   /*
    * insert server code here
    */
-  if (op1.vector_operando_len != op3.vector_operando_len) {
+  if (op1.vector_operando2_len != op3.vector_operando2_len) {
     result.errnum = 1;
     return &result;
   }
@@ -26,19 +27,19 @@ complex_calculator_res *calculate_1_svc(vector_operando op1, char operator,
   switch (operator) {
   case '+':
     result.errnum = 0;
-    result.complex_calculator_res_u.res.res_len = op1.vector_operando_len;
-    for (int i = 0; i < op1.vector_operando_len; i++) {
-      result.complex_calculator_res_u.res.res_val[i] =
-          op1.vector_operando_val[i] + op3.vector_operando_val[i];
+    result.complex_calculator_res2_u.res.res_len = op1.vector_operando2_len;
+    for (int i = 0; i < op1.vector_operando2_len; i++) {
+      result.complex_calculator_res2_u.res.res_val[i] =
+          op1.vector_operando2_val[i] + op3.vector_operando2_val[i];
     }
     break;
 
   case '-':
     result.errnum = 0;
-    result.complex_calculator_res_u.res.res_len = op1.vector_operando_len;
-    for (int i = 0; i < op1.vector_operando_len; i++) {
-      result.complex_calculator_res_u.res.res_val[i] =
-          op1.vector_operando_val[i] - op3.vector_operando_val[i];
+    result.complex_calculator_res2_u.res.res_len = op1.vector_operando2_len;
+    for (int i = 0; i < op1.vector_operando2_len; i++) {
+      result.complex_calculator_res2_u.res.res_val[i] =
+          op1.vector_operando2_val[i] - op3.vector_operando2_val[i];
     }
     break;
 

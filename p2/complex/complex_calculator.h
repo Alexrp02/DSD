@@ -15,55 +15,55 @@ extern "C" {
 
 
 typedef struct {
-	u_int vector_operando_len;
-	int *vector_operando_val;
-} vector_operando;
+	u_int vector_operando2_len;
+	float *vector_operando2_val;
+} vector_operando2;
 
-struct complex_calculator_res {
+struct complex_calculator_res2 {
 	int errnum;
 	union {
 		struct {
 			u_int res_len;
-			int *res_val;
+			float *res_val;
 		} res;
-	} complex_calculator_res_u;
+	} complex_calculator_res2_u;
 };
-typedef struct complex_calculator_res complex_calculator_res;
+typedef struct complex_calculator_res2 complex_calculator_res2;
 
-struct calculate_1_argument {
-	vector_operando arg1;
+struct calculate_complex_1_argument {
+	vector_operando2 arg1;
 	char arg2;
-	vector_operando arg3;
+	vector_operando2 arg3;
 };
-typedef struct calculate_1_argument calculate_1_argument;
+typedef struct calculate_complex_1_argument calculate_complex_1_argument;
 
 #define COMPLEX_CALCULATOR 0x20000002
 #define CCALVER 1
 
 #if defined(__STDC__) || defined(__cplusplus)
-#define CALCULATE 1
-extern  complex_calculator_res * calculate_1(vector_operando , char , vector_operando , CLIENT *);
-extern  complex_calculator_res * calculate_1_svc(vector_operando , char , vector_operando , struct svc_req *);
+#define CALCULATE_COMPLEX 1
+extern  complex_calculator_res2 * calculate_complex_1(vector_operando2 , char , vector_operando2 , CLIENT *);
+extern  complex_calculator_res2 * calculate_complex_1_svc(vector_operando2 , char , vector_operando2 , struct svc_req *);
 extern int complex_calculator_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
-#define CALCULATE 1
-extern  complex_calculator_res * calculate_1();
-extern  complex_calculator_res * calculate_1_svc();
+#define CALCULATE_COMPLEX 1
+extern  complex_calculator_res2 * calculate_complex_1();
+extern  complex_calculator_res2 * calculate_complex_1_svc();
 extern int complex_calculator_1_freeresult ();
 #endif /* K&R C */
 
 /* the xdr functions */
 
 #if defined(__STDC__) || defined(__cplusplus)
-extern  bool_t xdr_vector_operando (XDR *, vector_operando*);
-extern  bool_t xdr_complex_calculator_res (XDR *, complex_calculator_res*);
-extern  bool_t xdr_calculate_1_argument (XDR *, calculate_1_argument*);
+extern  bool_t xdr_vector_operando2 (XDR *, vector_operando2*);
+extern  bool_t xdr_complex_calculator_res2 (XDR *, complex_calculator_res2*);
+extern  bool_t xdr_calculate_complex_1_argument (XDR *, calculate_complex_1_argument*);
 
 #else /* K&R C */
-extern bool_t xdr_vector_operando ();
-extern bool_t xdr_complex_calculator_res ();
-extern bool_t xdr_calculate_1_argument ();
+extern bool_t xdr_vector_operando2 ();
+extern bool_t xdr_complex_calculator_res2 ();
+extern bool_t xdr_calculate_complex_1_argument ();
 
 #endif /* K&R C */
 

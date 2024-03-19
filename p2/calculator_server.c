@@ -5,6 +5,7 @@
  */
 
 #include "./calculator.h"
+#include "./complex/complex_calculator.h"
 #include <stdio.h>
 
 calculator_res *calculate_1_svc(float num1, char operator, float num2,
