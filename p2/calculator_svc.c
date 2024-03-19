@@ -3,164 +3,180 @@
  * It was generated using rpcgen.
  */
 
+#include "./complex/complex_calculator.h"
 #include "calculator.h"
+#include <memory.h>
+#include <netinet/in.h>
+#include <rpc/pmap_clnt.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <rpc/pmap_clnt.h>
 #include <string.h>
-#include <memory.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
 
 #ifndef SIG_PF
-#define SIG_PF void(*)(int)
+#define SIG_PF void (*)(int)
 #endif
 
-static calculator_res *
-_calculate_1 (calculate_1_argument *argp, struct svc_req *rqstp)
-{
-	return (calculate_1_svc(argp->arg1, argp->arg2, argp->arg3, rqstp));
+static calculator_res *_calculate_1(calculate_1_argument *argp,
+                                    struct svc_req *rqstp) {
+  return (calculate_1_svc(argp->arg1, argp->arg2, argp->arg3, rqstp));
+}
+
+static struct timeval TIMEOUT = {25, 0};
+
+static complex_calculator_res *
+_complex_calculate_1(complex_calculate_1_argument *argp,
+                     struct svc_req *rqstp) {
+  return (complex_calculate_1_svc(argp->arg1, argp->arg2, argp->arg3, rqstp));
 }
 
 static complex_calculator_res *
-_complex_calculate_1 (complex_calculate_1_argument *argp, struct svc_req *rqstp)
-{
-	return (complex_calculate_1_svc(argp->arg1, argp->arg2, argp->arg3, rqstp));
+_complex_calculate_2(complex_calculate_2_argument *argp,
+                     struct svc_req *rqstp) {
+  return (complex_calculate_2_svc(argp->arg1, argp->arg2, argp->arg3, rqstp));
 }
 
-static complex_calculator_res *
-_complex_calculate_2 (complex_calculate_2_argument *argp, struct svc_req *rqstp)
-{
-	return (complex_calculate_2_svc(argp->arg1, argp->arg2, argp->arg3, rqstp));
+static void calculator_1(struct svc_req *rqstp, register SVCXPRT *transp) {
+  union {
+    calculate_1_argument calculate_1_arg;
+    complex_calculate_1_argument complex_calculate_1_arg;
+  } argument;
+  char *result;
+  xdrproc_t _xdr_argument, _xdr_result;
+  char *(*local)(char *, struct svc_req *);
+
+  switch (rqstp->rq_proc) {
+  case NULLPROC:
+    (void)svc_sendreply(transp, (xdrproc_t)xdr_void, (char *)NULL);
+    return;
+
+  case CALCULATE:
+    _xdr_argument = (xdrproc_t)xdr_calculate_1_argument;
+    _xdr_result = (xdrproc_t)xdr_calculator_res;
+    local = (char *(*)(char *, struct svc_req *))_calculate_1;
+    break;
+
+  case COMPLEX_CALCULATE:
+    _xdr_argument = (xdrproc_t)xdr_complex_calculate_1_argument;
+    _xdr_result = (xdrproc_t)xdr_complex_calculator_res;
+    local = (char *(*)(char *, struct svc_req *))_complex_calculate_1;
+    break;
+
+  default:
+    svcerr_noproc(transp);
+    return;
+  }
+  memset((char *)&argument, 0, sizeof(argument));
+  if (!svc_getargs(transp, (xdrproc_t)_xdr_argument, (caddr_t)&argument)) {
+    svcerr_decode(transp);
+    return;
+  }
+  result = (*local)((char *)&argument, rqstp);
+  if (result != NULL &&
+      !svc_sendreply(transp, (xdrproc_t)_xdr_result, result)) {
+    svcerr_systemerr(transp);
+  }
+  if (!svc_freeargs(transp, (xdrproc_t)_xdr_argument, (caddr_t)&argument)) {
+    fprintf(stderr, "%s", "unable to free arguments");
+    exit(1);
+  }
+  return;
 }
 
-static void
-calculator_1(struct svc_req *rqstp, register SVCXPRT *transp)
-{
-	union {
-		calculate_1_argument calculate_1_arg;
-		complex_calculate_1_argument complex_calculate_1_arg;
-	} argument;
-	char *result;
-	xdrproc_t _xdr_argument, _xdr_result;
-	char *(*local)(char *, struct svc_req *);
+static void calculator_2(struct svc_req *rqstp, register SVCXPRT *transp) {
+  union {
+    complex_calculate_2_argument complex_calculate_2_arg;
+  } argument;
+  char *result;
+  xdrproc_t _xdr_argument, _xdr_result;
+  char *(*local)(char *, struct svc_req *);
 
-	switch (rqstp->rq_proc) {
-	case NULLPROC:
-		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
-		return;
+  switch (rqstp->rq_proc) {
+  case NULLPROC:
+    (void)svc_sendreply(transp, (xdrproc_t)xdr_void, (char *)NULL);
+    return;
 
-	case CALCULATE:
-		_xdr_argument = (xdrproc_t) xdr_calculate_1_argument;
-		_xdr_result = (xdrproc_t) xdr_calculator_res;
-		local = (char *(*)(char *, struct svc_req *)) _calculate_1;
-		break;
+  case COMPLEX_CALCULATE:
+    _xdr_argument = (xdrproc_t)xdr_complex_calculate_2_argument;
+    _xdr_result = (xdrproc_t)xdr_complex_calculator_res;
+    local = (char *(*)(char *, struct svc_req *))_complex_calculate_2;
+    break;
 
-	case COMPLEX_CALCULATE:
-		_xdr_argument = (xdrproc_t) xdr_complex_calculate_1_argument;
-		_xdr_result = (xdrproc_t) xdr_complex_calculator_res;
-		local = (char *(*)(char *, struct svc_req *)) _complex_calculate_1;
-		break;
-
-	default:
-		svcerr_noproc (transp);
-		return;
-	}
-	memset ((char *)&argument, 0, sizeof (argument));
-	if (!svc_getargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
-		svcerr_decode (transp);
-		return;
-	}
-	result = (*local)((char *)&argument, rqstp);
-	if (result != NULL && !svc_sendreply(transp, (xdrproc_t) _xdr_result, result)) {
-		svcerr_systemerr (transp);
-	}
-	if (!svc_freeargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
-		fprintf (stderr, "%s", "unable to free arguments");
-		exit (1);
-	}
-	return;
+  default:
+    svcerr_noproc(transp);
+    return;
+  }
+  memset((char *)&argument, 0, sizeof(argument));
+  if (!svc_getargs(transp, (xdrproc_t)_xdr_argument, (caddr_t)&argument)) {
+    svcerr_decode(transp);
+    return;
+  }
+  result = (*local)((char *)&argument, rqstp);
+  if (result != NULL &&
+      !svc_sendreply(transp, (xdrproc_t)_xdr_result, result)) {
+    svcerr_systemerr(transp);
+  }
+  if (!svc_freeargs(transp, (xdrproc_t)_xdr_argument, (caddr_t)&argument)) {
+    fprintf(stderr, "%s", "unable to free arguments");
+    exit(1);
+  }
+  return;
 }
 
-static void
-calculator_2(struct svc_req *rqstp, register SVCXPRT *transp)
-{
-	union {
-		complex_calculate_2_argument complex_calculate_2_arg;
-	} argument;
-	char *result;
-	xdrproc_t _xdr_argument, _xdr_result;
-	char *(*local)(char *, struct svc_req *);
+int main(int argc, char **argv) {
+  register SVCXPRT *transp;
 
-	switch (rqstp->rq_proc) {
-	case NULLPROC:
-		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
-		return;
+  pmap_unset(CALCULATOR, CALVER);
+  pmap_unset(CALCULATOR, CALVER2);
 
-	case COMPLEX_CALCULATE:
-		_xdr_argument = (xdrproc_t) xdr_complex_calculate_2_argument;
-		_xdr_result = (xdrproc_t) xdr_complex_calculator_res;
-		local = (char *(*)(char *, struct svc_req *)) _complex_calculate_2;
-		break;
+  transp = svcudp_create(RPC_ANYSOCK);
+  if (transp == NULL) {
+    fprintf(stderr, "%s", "cannot create udp service.");
+    exit(1);
+  }
+  if (!svc_register(transp, CALCULATOR, CALVER, calculator_1, IPPROTO_UDP)) {
+    fprintf(stderr, "%s", "unable to register (CALCULATOR, CALVER, udp).");
+    exit(1);
+  }
+  if (!svc_register(transp, CALCULATOR, CALVER2, calculator_2, IPPROTO_UDP)) {
+    fprintf(stderr, "%s", "unable to register (CALCULATOR, CALVER2, udp).");
+    exit(1);
+  }
 
-	default:
-		svcerr_noproc (transp);
-		return;
-	}
-	memset ((char *)&argument, 0, sizeof (argument));
-	if (!svc_getargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
-		svcerr_decode (transp);
-		return;
-	}
-	result = (*local)((char *)&argument, rqstp);
-	if (result != NULL && !svc_sendreply(transp, (xdrproc_t) _xdr_result, result)) {
-		svcerr_systemerr (transp);
-	}
-	if (!svc_freeargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
-		fprintf (stderr, "%s", "unable to free arguments");
-		exit (1);
-	}
-	return;
+  transp = svctcp_create(RPC_ANYSOCK, 0, 0);
+  if (transp == NULL) {
+    fprintf(stderr, "%s", "cannot create tcp service.");
+    exit(1);
+  }
+  if (!svc_register(transp, CALCULATOR, CALVER, calculator_1, IPPROTO_TCP)) {
+    fprintf(stderr, "%s", "unable to register (CALCULATOR, CALVER, tcp).");
+    exit(1);
+  }
+  if (!svc_register(transp, CALCULATOR, CALVER2, calculator_2, IPPROTO_TCP)) {
+    fprintf(stderr, "%s", "unable to register (CALCULATOR, CALVER2, tcp).");
+    exit(1);
+  }
+
+  svc_run();
+  fprintf(stderr, "%s", "svc_run returned");
+  exit(1);
+  /* NOTREACHED */
 }
+complex_calculator_res2 *calculate_complex_1(vector_operando2 arg1, char arg2,
+                                             vector_operando2 arg3,
+                                             CLIENT *clnt) {
+  calculate_complex_1_argument arg;
+  static complex_calculator_res2 clnt_res;
 
-int
-main (int argc, char **argv)
-{
-	register SVCXPRT *transp;
-
-	pmap_unset (CALCULATOR, CALVER);
-	pmap_unset (CALCULATOR, CALVER2);
-
-	transp = svcudp_create(RPC_ANYSOCK);
-	if (transp == NULL) {
-		fprintf (stderr, "%s", "cannot create udp service.");
-		exit(1);
-	}
-	if (!svc_register(transp, CALCULATOR, CALVER, calculator_1, IPPROTO_UDP)) {
-		fprintf (stderr, "%s", "unable to register (CALCULATOR, CALVER, udp).");
-		exit(1);
-	}
-	if (!svc_register(transp, CALCULATOR, CALVER2, calculator_2, IPPROTO_UDP)) {
-		fprintf (stderr, "%s", "unable to register (CALCULATOR, CALVER2, udp).");
-		exit(1);
-	}
-
-	transp = svctcp_create(RPC_ANYSOCK, 0, 0);
-	if (transp == NULL) {
-		fprintf (stderr, "%s", "cannot create tcp service.");
-		exit(1);
-	}
-	if (!svc_register(transp, CALCULATOR, CALVER, calculator_1, IPPROTO_TCP)) {
-		fprintf (stderr, "%s", "unable to register (CALCULATOR, CALVER, tcp).");
-		exit(1);
-	}
-	if (!svc_register(transp, CALCULATOR, CALVER2, calculator_2, IPPROTO_TCP)) {
-		fprintf (stderr, "%s", "unable to register (CALCULATOR, CALVER2, tcp).");
-		exit(1);
-	}
-
-	svc_run ();
-	fprintf (stderr, "%s", "svc_run returned");
-	exit (1);
-	/* NOTREACHED */
+  memset((char *)&clnt_res, 0, sizeof(clnt_res));
+  arg.arg1 = arg1;
+  arg.arg2 = arg2;
+  arg.arg3 = arg3;
+  if (clnt_call(clnt, CALCULATE_COMPLEX,
+                (xdrproc_t)xdr_calculate_complex_1_argument, (caddr_t)&arg,
+                (xdrproc_t)xdr_complex_calculator_res2, (caddr_t)&clnt_res,
+                TIMEOUT) != RPC_SUCCESS) {
+    return (NULL);
+  }
+  return (&clnt_res);
 }

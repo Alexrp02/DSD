@@ -21,7 +21,7 @@ int getArrayLength(char *input) {
 
 vector_operando parseArray(char *input) {
   int count = 0;
-  int *array = NULL;
+  float *array = NULL;
   vector_operando op;
 
   count = getArrayLength(input);
@@ -29,17 +29,17 @@ vector_operando parseArray(char *input) {
   printf("Vector con tamaño: %d\n", op.vector_operando_len);
 
   // Allocate memory for the array
-  array = (int *)malloc(count * sizeof(int));
+  array = (float *)malloc(count * sizeof(float));
 
   // Parse the array elements
   int index = 0;
-  int num = 0;
-  sscanf(input, "[%d", &num);
+  float num = 0;
+  sscanf(input, "[%f", &num);
   array[index++] = num;
   for (int i = 1; input[i] != '\0'; i++) {
     if (input[i] == ',' || input[i] == ']') {
       if (input[i] == ',') {
-        sscanf(input + i + 1, "%d", &num);
+        sscanf(input + i + 1, "%f", &num);
         array[index++] = num;
       }
       i++;

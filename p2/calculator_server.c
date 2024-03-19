@@ -8,6 +8,38 @@
 #include "./complex/complex_calculator.h"
 #include <stdio.h>
 
+void complex_calculator_1(char *host, vector_operando2 op1, char operator,
+                          vector_operando2 op2) {
+  CLIENT *clnt;
+  complex_calculator_res2 *result_1;
+
+#ifndef DEBUG
+  clnt = clnt_create(host, COMPLEX_CALCULATOR, CCALVER, "udp");
+  if (clnt == NULL) {
+    clnt_pcreateerror(host);
+    exit(1);
+  }
+#endif /* DEBUG */
+
+  result_1 = calculate_complex_1(op1, operator, op2, clnt);
+  if (result_1 == (complex_calculator_res2 *)NULL) {
+    clnt_perror(clnt, "call failed");
+  } else if (result_1->errnum != 0) {
+    printf("Error: %d\n", result_1->errnum);
+  }
+
+  printf("Resultado: ");
+  for (int i = 0; i < result_1->complex_calculator_res2_u.res.res_len; i++) {
+    printf("%f ", result_1->complex_calculator_res2_u.res.res_val[i]);
+  }
+  printf("\n");
+
+  free(result_1->complex_calculator_res2_u.res.res_val);
+#ifndef DEBUG
+  clnt_destroy(clnt);
+#endif /* DEBUG */
+}
+
 calculator_res *calculate_1_svc(float num1, char operator, float num2,
                                 struct svc_req *rqstp) {
   static calculator_res result;
@@ -48,6 +80,13 @@ complex_calculator_res *complex_calculate_1_svc(vector_operando arg1,
                                                 struct svc_req *rqstp) {
   printf("Función demasiado compleja para este servidor, llamando a servidor "
          "más capacitado.\n");
+  vector_operando2 op1;
+  vector_operando2 op2;
+  op1.vector_operando2_len = arg1.vector_operando_len;
+  op1.vector_operando2_val = arg1.vector_operando_val;
+  op2.vector_operando2_len = arg2.vector_operando_len;
+  op2.vector_operando2_val = arg2.vector_operando_val;
+  complex_calculator_1("localhost", op1, operator, op2);
   static complex_calculator_res result;
   result.errnum = 0;
   return &result;
