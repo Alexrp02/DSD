@@ -26,7 +26,6 @@ vector_operando parseArray(char *input) {
 
   count = getArrayLength(input);
   op.vector_operando_len = count;
-  printf("Vector con tamaño: %d\n", op.vector_operando_len);
 
   // Allocate memory for the array
   array = (float *)malloc(count * sizeof(float));
@@ -101,6 +100,13 @@ void complex_calculator_1(char *host, vector_operando vec1, char operator,
     printf("Error, not a valid operation: %d\n", result_1->errnum);
     exit(1);
   }
+  printf("Resultado: \n");
+  printf("[");
+  for (int i = 0; i < result_1->complex_calculator_res_u.res.res_len; i++) {
+    printf("%f ", result_1->complex_calculator_res_u.res.res_val[i]);
+  }
+  printf("]");
+  printf("\n");
 
 #ifndef DEBUG
   clnt_destroy(clnt);
@@ -151,10 +157,8 @@ int main(int argc, char *argv[]) {
 
   printf("Ingrese el primer número o vector: \n");
   scanf("%[^\n]s", num1);
-  printf("El primer número o vector es: %s\n", num1);
   printf("Ingrese el operador (+, -, x, /): \n");
   scanf(" %c", &operator);
-  printf("El operador es: %c\n", operator);
   printf("Ingrese el segundo número o vector: \n");
   scanf(" %[^\n]s", num2);
   vector_operando vec_operando1;

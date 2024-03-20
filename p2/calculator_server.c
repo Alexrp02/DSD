@@ -8,8 +8,9 @@
 #include "./complex/complex_calculator.h"
 #include <stdio.h>
 
-void complex_calculator_1(char *host, vector_operando2 op1, char operator,
-                          vector_operando2 op2) {
+complex_calculator_res complex_calculator_1(char *host, vector_operando2 op1,
+                                            char operator,
+                                            vector_operando2 op2) {
   CLIENT *clnt;
   complex_calculator_res2 *result_1;
 
@@ -33,11 +34,16 @@ void complex_calculator_1(char *host, vector_operando2 op1, char operator,
     printf("%f ", result_1->complex_calculator_res2_u.res.res_val[i]);
   }
   printf("\n");
-
-  free(result_1->complex_calculator_res2_u.res.res_val);
+  static complex_calculator_res result;
+  result.errnum = result_1->errnum;
+  result.complex_calculator_res_u.res.res_len =
+      result_1->complex_calculator_res2_u.res.res_len;
+  result.complex_calculator_res_u.res.res_val =
+      result_1->complex_calculator_res2_u.res.res_val;
 #ifndef DEBUG
   clnt_destroy(clnt);
 #endif /* DEBUG */
+  return result;
 }
 
 calculator_res *calculate_1_svc(float num1, char operator, float num2,
@@ -86,9 +92,12 @@ complex_calculator_res *complex_calculate_1_svc(vector_operando arg1,
   op1.vector_operando2_val = arg1.vector_operando_val;
   op2.vector_operando2_len = arg2.vector_operando_len;
   op2.vector_operando2_val = arg2.vector_operando_val;
-  complex_calculator_1("localhost", op1, operator, op2);
   static complex_calculator_res result;
-  result.errnum = 0;
+  result = complex_calculator_1("localhost", op1, operator, op2);
+  printf("Resultado: ");
+  for (int i = 0; i < result.complex_calculator_res_u.res.res_len; i++) {
+    printf("%f ", result.complex_calculator_res_u.res.res_val[i]);
+  }
   return &result;
 }
 
