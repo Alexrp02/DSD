@@ -1,2 +1,5 @@
 *.o
 p2/*.o
+p2-2/.pyenv
+p2-2/__MACOSX
+p2-2/gen-py/calculadora/__pycache__

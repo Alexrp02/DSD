@@ -1,0 +1,66 @@
+from calculadora import Calculadora
+
+from thrift import Thrift
+from thrift.transport import TSocket
+from thrift.transport import TTransport
+from thrift.protocol import TBinaryProtocol
+
+transport = TSocket.TSocket("localhost", 9090)
+transport = TTransport.TBufferedTransport(transport)
+protocol = TBinaryProtocol.TBinaryProtocol(transport)
+
+client = Calculadora.Client(protocol)
+
+transport.open()
+
+print("Introduce el primer número a operar:")
+n1 = int(input())
+
+print("Introduce la operación a realizar (+, -, x, /) (seno, coseno, tangente, convertir):")
+operacion = input()
+
+if operacion in ["+", "-", "x", "/"]:
+    print("Introduce el segundo número a operar:")
+    n2 = int(input())
+    print("La operación a solicitar al servidor es " + str(n1) + " " + operacion + " " + str(n2))
+
+    match operacion:
+        case "+":
+            print("Solicitando al servidor una suma...")
+            resultado = client.suma(n1, n2)
+            print("El resultado de la suma es: " + str(resultado))
+        case "-":
+            print("Solicitando al servidor una resta...")
+            resultado = client.resta(n1, n2)
+            print("El resultado de la resta es: " + str(resultado))
+        case "x":
+            print("Solicitando al servidor una multiplicación...")
+            resultado = client.multiplicacion(n1, n2)
+            print("El resultado de la multiplicación es: " + str(resultado))
+        case "/":
+            print("Solicitando al servidor una división...")
+            resultado = client.division(n1, n2)
+            print("El resultado de la división es: " + str(resultado))
+elif operacion in ["seno", "coseno", "tangente", "convertir"]:
+    match operacion:
+        case "seno":
+            print("Solicitando al servidor el seno de " + str(n1) + "...")
+            resultado = client.seno(n1)
+            print("El seno de " + str(n1) + " es: " + str(resultado))
+        case "coseno":
+            print("Solicitando al servidor el coseno de " + str(n1) + "...")
+            resultado = client.coseno(n1)
+            print("El coseno de " + str(n1) + " es: " + str(resultado))
+        case "tangente":
+            print("Solicitando al servidor la tangente de " + str(n1) + "...")
+            resultado = client.tangente(n1)
+            print("La tangente de " + str(n1) + " es: " + str(resultado))
+        case "convertir":
+            print("Solicitando al servidor la conversión de " + str(n1) + " a binario...")
+            resultado = client.convertirGradosARadianes(n1)
+            print(str(n1) + " grados en radianes son: " + str(resultado))
+else:
+    print("Operación no válida no implementada en el servidor.")
+
+
+transport.close()
