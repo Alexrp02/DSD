@@ -57,6 +57,10 @@ class CalculadoraHandler:
         print("convirtiendo " + str(n1) + " a radianes")
         return math.radians(n1)
 
+    def convertirRadianesAGrados(self, n1):
+        print("convirtiendo " + str(n1) + " a grados")
+        return math.degrees(n1)
+
 
 if __name__ == "__main__":
     handler = CalculadoraHandler()

@@ -10,16 +10,18 @@ transport = TTransport.TBufferedTransport(transport)
 protocol = TBinaryProtocol.TBinaryProtocol(transport)
 
 client = Calculadora.Client(protocol)
+operaciones = ["+", "-", "x", "/"]
+trigonometria = ["seno", "coseno", "tangente", "convertir a radianes", "convertir a grados"]
 
 transport.open()
 
 print("Introduce el primer número a operar:")
 n1 = int(input())
 
-print("Introduce la operación a realizar (+, -, x, /) (seno, coseno, tangente, convertir):")
+print("Introduce la operación a realizar " + str(operaciones).replace('[', '(').replace(']', ')').replace("'", "") + " " + str(trigonometria).replace('[', '(').replace(']', ')').replace("'", "") + ":")
 operacion = input()
 
-if operacion in ["+", "-", "x", "/"]:
+if operacion in operaciones:
     print("Introduce el segundo número a operar:")
     n2 = int(input())
     print("La operación a solicitar al servidor es " + str(n1) + " " + operacion + " " + str(n2))
@@ -41,7 +43,7 @@ if operacion in ["+", "-", "x", "/"]:
             print("Solicitando al servidor una división...")
             resultado = client.division(n1, n2)
             print("El resultado de la división es: " + str(resultado))
-elif operacion in ["seno", "coseno", "tangente", "convertir"]:
+elif operacion in trigonometria:
     match operacion:
         case "seno":
             print("Solicitando al servidor el seno de " + str(n1) + "...")
@@ -55,12 +57,16 @@ elif operacion in ["seno", "coseno", "tangente", "convertir"]:
             print("Solicitando al servidor la tangente de " + str(n1) + "...")
             resultado = client.tangente(n1)
             print("La tangente de " + str(n1) + " es: " + str(resultado))
-        case "convertir":
-            print("Solicitando al servidor la conversión de " + str(n1) + " a binario...")
+        case "convertir a radianes":
+            print("Solicitando al servidor la conversión de " + str(n1) + " a radianes...")
             resultado = client.convertirGradosARadianes(n1)
             print(str(n1) + " grados en radianes son: " + str(resultado))
+        case "convertir a grados":
+            print ("Solicitando al servidor la conversión de " + str(n1) + " a grados")
+            resultado = client.convertirRadianesAGrados(n1)
+            print(str(n1) + " radianes en grados son: " + str(resultado) )
 else:
-    print("Operación no válida no implementada en el servidor.")
+    print("La operación " + operacion + " no está implementada en el programa.")
 
-
+                     
 transport.close()

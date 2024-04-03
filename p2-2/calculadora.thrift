@@ -13,4 +13,5 @@ service Calculadora{
    double coseno(1:double num),
    double tangente(1:double num),
    double convertirGradosARadianes(1:double num),
+   double convertirRadianesAGrados(1: double num),
 }

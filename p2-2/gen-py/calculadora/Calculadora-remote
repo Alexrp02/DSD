@@ -33,6 +33,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('  double coseno(double num)')
     print('  double tangente(double num)')
     print('  double convertirGradosARadianes(double num)')
+    print('  double convertirRadianesAGrados(double num)')
     print('')
     sys.exit(0)
 
@@ -165,6 +166,12 @@ elif cmd == 'convertirGradosARadianes':
         print('convertirGradosARadianes requires 1 args')
         sys.exit(1)
     pp.pprint(client.convertirGradosARadianes(eval(args[0]),))
+
+elif cmd == 'convertirRadianesAGrados':
+    if len(args) != 1:
+        print('convertirRadianesAGrados requires 1 args')
+        sys.exit(1)
+    pp.pprint(client.convertirRadianesAGrados(eval(args[0]),))
 
 else:
     print('Unrecognized method %s' % cmd)
