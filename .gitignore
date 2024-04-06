@@ -3,3 +3,4 @@ p2/*.o
 p2-2/.pyenv
 p2-2/__MACOSX
 p2-2/gen-py/calculadora/__pycache__
+p2-2/gen-rs/calculadora_compleja/target
