@@ -4,7 +4,10 @@ use thrift::protocol::{TCompactInputProtocol, TCompactOutputProtocol};
 use thrift::transport::{TFramedReadTransport, TFramedWriteTransport, TIoChannel, TTcpChannel};
 
 fn main() {
-    print!("Hello, world!")
+    match run() {
+        Ok(_) => println!("Success"),
+        Err(e) => eprintln!("Error: {:?}", e),
+    }
 }
 
 fn run() -> thrift::Result<()> {
