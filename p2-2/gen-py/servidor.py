@@ -4,6 +4,7 @@ import sys
 import math
 
 from calculadora import Calculadora
+from calculadora_compleja import CalculadoraCompleja
 
 from thrift.transport import TSocket
 from thrift.transport import TTransport
@@ -21,6 +22,17 @@ class CalculadoraHandler:
 
     def ping(self):
         print("me han hecho ping()")
+        print("haciendo ping al servidor en nodejs...");
+        transport = TSocket.TSocket("localhost", 9091)
+        transport = TTransport.TBufferedTransport(transport)
+        protocol = TBinaryProtocol.TBinaryProtocol(transport)
+
+        client = CalculadoraCompleja.Client(protocol)
+        transport.open()
+
+        client.ping()
+
+        transport.close()
 
     def suma(self, n1, n2):
         print("sumando " + str(n1) + " con " + str(n2))

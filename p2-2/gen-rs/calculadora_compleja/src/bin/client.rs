@@ -21,6 +21,8 @@ fn run() -> thrift::Result<()> {
     let mut client = CalculadoraComplejaSyncClient::new(i_prot, o_prot);
 
     // Llamar a las funciones aquí, después de la declaración del cliente
+    print!("Haciendo ping al servidor para comprobar que funcione.\n");
+    client.ping()?;
 
     Ok(())
 }
