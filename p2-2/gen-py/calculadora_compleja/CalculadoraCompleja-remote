@@ -27,7 +27,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('  void ping()')
     print('   sumarVectores( vec1,  vec2)')
     print('   restarVectores( vec1,  vec2)')
-    print('   productoEscalar( vec1,  vec2)')
+    print('  double productoEscalar( vec1,  vec2)')
     print('   productoVectorial( vec1,  vec2)')
     print('')
     sys.exit(0)

@@ -34,6 +34,8 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('  double tangente(double num)')
     print('  double convertirGradosARadianes(double num)')
     print('  double convertirRadianesAGrados(double num)')
+    print('   operacionesVectores( vector1,  vector2, string operacion)')
+    print('  double productoEscalar( vector1,  vector2)')
     print('')
     sys.exit(0)
 
@@ -172,6 +174,18 @@ elif cmd == 'convertirRadianesAGrados':
         print('convertirRadianesAGrados requires 1 args')
         sys.exit(1)
     pp.pprint(client.convertirRadianesAGrados(eval(args[0]),))
+
+elif cmd == 'operacionesVectores':
+    if len(args) != 3:
+        print('operacionesVectores requires 3 args')
+        sys.exit(1)
+    pp.pprint(client.operacionesVectores(eval(args[0]), eval(args[1]), args[2],))
+
+elif cmd == 'productoEscalar':
+    if len(args) != 2:
+        print('productoEscalar requires 2 args')
+        sys.exit(1)
+    pp.pprint(client.productoEscalar(eval(args[0]), eval(args[1]),))
 
 else:
     print('Unrecognized method %s' % cmd)

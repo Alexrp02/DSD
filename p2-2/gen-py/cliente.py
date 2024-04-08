@@ -12,7 +12,13 @@ protocol = TBinaryProtocol.TBinaryProtocol(transport)
 
 client = Calculadora.Client(protocol)
 operaciones = ["+", "-", "x", "/"]
-trigonometria = ["seno", "coseno", "tangente", "convertir a radianes", "convertir a grados"]
+trigonometria = [
+    "seno",
+    "coseno",
+    "tangente",
+    "convertir a radianes",
+    "convertir a grados",
+]
 
 transport.open()
 print("Haciendo ping al servidor...")
@@ -22,19 +28,34 @@ while True:
     print("Introduce el primer número a operar:")
     n1 = int(input())
 
-    print("Introduce la operación a realizar " + str(operaciones).replace('[', '(').replace(']', ')').replace("'", "") + " " + str(trigonometria).replace('[', '(').replace(']', ')').replace("'", "") + ":")
+    print(
+        "Introduce la operación a realizar "
+        + str(operaciones).replace("[", "(").replace("]", ")").replace("'", "")
+        + " "
+        + str(trigonometria).replace("[", "(").replace("]", ")").replace("'", "")
+        + ":"
+    )
     operacion = input()
 
     if operacion in operaciones:
         print("Introduce el segundo número a operar:")
         n2 = int(input())
-        print("La operación a solicitar al servidor es " + str(n1) + " " + operacion + " " + str(n2))
+        print(
+            "La operación a solicitar al servidor es "
+            + str(n1)
+            + " "
+            + operacion
+            + " "
+            + str(n2)
+        )
 
         match operacion:
             case "+":
                 print("Solicitando al servidor una suma...")
                 resultado = client.suma(n1, n2)
                 print("El resultado de la suma es: " + str(resultado))
+                resultado = client.operacionesVectores([n1, n2], [n2, n1], "+")
+                print("El resultado de la suma de vectores es: " + str(resultado))
             case "-":
                 print("Solicitando al servidor una resta...")
                 resultado = client.resta(n1, n2)
@@ -65,13 +86,19 @@ while True:
                 resultado = client.tangente(n1)
                 print("La tangente de " + str(n1) + " es: " + str(resultado))
             case "convertir a radianes":
-                print("Solicitando al servidor la conversión de " + str(n1) + " a radianes...")
+                print(
+                    "Solicitando al servidor la conversión de "
+                    + str(n1)
+                    + " a radianes..."
+                )
                 resultado = client.convertirGradosARadianes(n1)
                 print(str(n1) + " grados en radianes son: " + str(resultado))
             case "convertir a grados":
-                print ("Solicitando al servidor la conversión de " + str(n1) + " a grados")
+                print(
+                    "Solicitando al servidor la conversión de " + str(n1) + " a grados"
+                )
                 resultado = client.convertirRadianesAGrados(n1)
-                print(str(n1) + " radianes en grados son: " + str(resultado) )
+                print(str(n1) + " radianes en grados son: " + str(resultado))
     else:
         print("La operación " + operacion + " no está implementada en el programa.")
 

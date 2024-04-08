@@ -122,6 +122,8 @@ class Client(Iface):
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
+        if result.e is not None:
+            raise result.e
         raise TApplicationException(TApplicationException.MISSING_RESULT, "sumarVectores failed: unknown result")
 
     def restarVectores(self, vec1, vec2):
@@ -156,6 +158,8 @@ class Client(Iface):
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
+        if result.e is not None:
+            raise result.e
         raise TApplicationException(TApplicationException.MISSING_RESULT, "restarVectores failed: unknown result")
 
     def productoEscalar(self, vec1, vec2):
@@ -190,6 +194,8 @@ class Client(Iface):
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
+        if result.e is not None:
+            raise result.e
         raise TApplicationException(TApplicationException.MISSING_RESULT, "productoEscalar failed: unknown result")
 
     def productoVectorial(self, vec1, vec2):
@@ -224,6 +230,8 @@ class Client(Iface):
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
+        if result.e is not None:
+            raise result.e
         raise TApplicationException(TApplicationException.MISSING_RESULT, "productoVectorial failed: unknown result")
 
 
@@ -291,6 +299,9 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
+        except InvalidSize as e:
+            msg_type = TMessageType.REPLY
+            result.e = e
         except TApplicationException as ex:
             logging.exception('TApplication exception in handler')
             msg_type = TMessageType.EXCEPTION
@@ -314,6 +325,9 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
+        except InvalidSize as e:
+            msg_type = TMessageType.REPLY
+            result.e = e
         except TApplicationException as ex:
             logging.exception('TApplication exception in handler')
             msg_type = TMessageType.EXCEPTION
@@ -337,6 +351,9 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
+        except InvalidSize as e:
+            msg_type = TMessageType.REPLY
+            result.e = e
         except TApplicationException as ex:
             logging.exception('TApplication exception in handler')
             msg_type = TMessageType.EXCEPTION
@@ -360,6 +377,9 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
+        except InvalidSize as e:
+            msg_type = TMessageType.REPLY
+            result.e = e
         except TApplicationException as ex:
             logging.exception('TApplication exception in handler')
             msg_type = TMessageType.EXCEPTION
@@ -556,12 +576,14 @@ class sumarVectores_result(object):
     """
     Attributes:
      - success
+     - e
 
     """
 
 
-    def __init__(self, success=None,):
+    def __init__(self, success=None, e=None,):
         self.success = success
+        self.e = e
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -582,6 +604,11 @@ class sumarVectores_result(object):
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
+            elif fid == 1:
+                if ftype == TType.STRUCT:
+                    self.e = InvalidSize.read(iprot)
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -598,6 +625,10 @@ class sumarVectores_result(object):
             for iter20 in self.success:
                 oprot.writeDouble(iter20)
             oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.e is not None:
+            oprot.writeFieldBegin('e', TType.STRUCT, 1)
+            self.e.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -618,6 +649,7 @@ class sumarVectores_result(object):
 all_structs.append(sumarVectores_result)
 sumarVectores_result.thrift_spec = (
     (0, TType.LIST, 'success', (TType.DOUBLE, None, False), None, ),  # 0
+    (1, TType.STRUCT, 'e', [InvalidSize, None], None, ),  # 1
 )
 
 
@@ -715,12 +747,14 @@ class restarVectores_result(object):
     """
     Attributes:
      - success
+     - e
 
     """
 
 
-    def __init__(self, success=None,):
+    def __init__(self, success=None, e=None,):
         self.success = success
+        self.e = e
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -741,6 +775,11 @@ class restarVectores_result(object):
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
+            elif fid == 1:
+                if ftype == TType.STRUCT:
+                    self.e = InvalidSize.read(iprot)
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -757,6 +796,10 @@ class restarVectores_result(object):
             for iter41 in self.success:
                 oprot.writeDouble(iter41)
             oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.e is not None:
+            oprot.writeFieldBegin('e', TType.STRUCT, 1)
+            self.e.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -777,6 +820,7 @@ class restarVectores_result(object):
 all_structs.append(restarVectores_result)
 restarVectores_result.thrift_spec = (
     (0, TType.LIST, 'success', (TType.DOUBLE, None, False), None, ),  # 0
+    (1, TType.STRUCT, 'e', [InvalidSize, None], None, ),  # 1
 )
 
 
@@ -874,12 +918,14 @@ class productoEscalar_result(object):
     """
     Attributes:
      - success
+     - e
 
     """
 
 
-    def __init__(self, success=None,):
+    def __init__(self, success=None, e=None,):
         self.success = success
+        self.e = e
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -891,13 +937,13 @@ class productoEscalar_result(object):
             if ftype == TType.STOP:
                 break
             if fid == 0:
-                if ftype == TType.LIST:
-                    self.success = []
-                    (_etype59, _size56) = iprot.readListBegin()
-                    for _i60 in range(_size56):
-                        _elem61 = iprot.readDouble()
-                        self.success.append(_elem61)
-                    iprot.readListEnd()
+                if ftype == TType.DOUBLE:
+                    self.success = iprot.readDouble()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 1:
+                if ftype == TType.STRUCT:
+                    self.e = InvalidSize.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -911,11 +957,12 @@ class productoEscalar_result(object):
             return
         oprot.writeStructBegin('productoEscalar_result')
         if self.success is not None:
-            oprot.writeFieldBegin('success', TType.LIST, 0)
-            oprot.writeListBegin(TType.DOUBLE, len(self.success))
-            for iter62 in self.success:
-                oprot.writeDouble(iter62)
-            oprot.writeListEnd()
+            oprot.writeFieldBegin('success', TType.DOUBLE, 0)
+            oprot.writeDouble(self.success)
+            oprot.writeFieldEnd()
+        if self.e is not None:
+            oprot.writeFieldBegin('e', TType.STRUCT, 1)
+            self.e.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -935,7 +982,8 @@ class productoEscalar_result(object):
         return not (self == other)
 all_structs.append(productoEscalar_result)
 productoEscalar_result.thrift_spec = (
-    (0, TType.LIST, 'success', (TType.DOUBLE, None, False), None, ),  # 0
+    (0, TType.DOUBLE, 'success', None, None, ),  # 0
+    (1, TType.STRUCT, 'e', [InvalidSize, None], None, ),  # 1
 )
 
 
@@ -964,20 +1012,20 @@ class productoVectorial_args(object):
             if fid == 1:
                 if ftype == TType.LIST:
                     self.vec1 = []
-                    (_etype66, _size63) = iprot.readListBegin()
-                    for _i67 in range(_size63):
-                        _elem68 = iprot.readDouble()
-                        self.vec1.append(_elem68)
+                    (_etype59, _size56) = iprot.readListBegin()
+                    for _i60 in range(_size56):
+                        _elem61 = iprot.readDouble()
+                        self.vec1.append(_elem61)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.vec2 = []
-                    (_etype72, _size69) = iprot.readListBegin()
-                    for _i73 in range(_size69):
-                        _elem74 = iprot.readDouble()
-                        self.vec2.append(_elem74)
+                    (_etype65, _size62) = iprot.readListBegin()
+                    for _i66 in range(_size62):
+                        _elem67 = iprot.readDouble()
+                        self.vec2.append(_elem67)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -994,15 +1042,15 @@ class productoVectorial_args(object):
         if self.vec1 is not None:
             oprot.writeFieldBegin('vec1', TType.LIST, 1)
             oprot.writeListBegin(TType.DOUBLE, len(self.vec1))
-            for iter75 in self.vec1:
-                oprot.writeDouble(iter75)
+            for iter68 in self.vec1:
+                oprot.writeDouble(iter68)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.vec2 is not None:
             oprot.writeFieldBegin('vec2', TType.LIST, 2)
             oprot.writeListBegin(TType.DOUBLE, len(self.vec2))
-            for iter76 in self.vec2:
-                oprot.writeDouble(iter76)
+            for iter69 in self.vec2:
+                oprot.writeDouble(iter69)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1033,12 +1081,14 @@ class productoVectorial_result(object):
     """
     Attributes:
      - success
+     - e
 
     """
 
 
-    def __init__(self, success=None,):
+    def __init__(self, success=None, e=None,):
         self.success = success
+        self.e = e
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -1052,11 +1102,16 @@ class productoVectorial_result(object):
             if fid == 0:
                 if ftype == TType.LIST:
                     self.success = []
-                    (_etype80, _size77) = iprot.readListBegin()
-                    for _i81 in range(_size77):
-                        _elem82 = iprot.readDouble()
-                        self.success.append(_elem82)
+                    (_etype73, _size70) = iprot.readListBegin()
+                    for _i74 in range(_size70):
+                        _elem75 = iprot.readDouble()
+                        self.success.append(_elem75)
                     iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 1:
+                if ftype == TType.STRUCT:
+                    self.e = InvalidSize.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -1072,9 +1127,13 @@ class productoVectorial_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.LIST, 0)
             oprot.writeListBegin(TType.DOUBLE, len(self.success))
-            for iter83 in self.success:
-                oprot.writeDouble(iter83)
+            for iter76 in self.success:
+                oprot.writeDouble(iter76)
             oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.e is not None:
+            oprot.writeFieldBegin('e', TType.STRUCT, 1)
+            self.e.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1095,6 +1154,7 @@ class productoVectorial_result(object):
 all_structs.append(productoVectorial_result)
 productoVectorial_result.thrift_spec = (
     (0, TType.LIST, 'success', (TType.DOUBLE, None, False), None, ),  # 0
+    (1, TType.STRUCT, 'e', [InvalidSize, None], None, ),  # 1
 )
 fix_spec(all_structs)
 del all_structs

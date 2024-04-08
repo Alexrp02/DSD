@@ -14,4 +14,6 @@ service Calculadora{
    double tangente(1:double num),
    double convertirGradosARadianes(1:double num),
    double convertirRadianesAGrados(1: double num),
+   list<double> operacionesVectores(1: list<double> vector1, 2: list<double> vector2, 3: string operacion),
+   double productoEscalar(1: list<double> vector1, 2: list<double> vector2),
 }

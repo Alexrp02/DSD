@@ -98,6 +98,25 @@ class Iface(object):
         """
         pass
 
+    def operacionesVectores(self, vector1, vector2, operacion):
+        """
+        Parameters:
+         - vector1
+         - vector2
+         - operacion
+
+        """
+        pass
+
+    def productoEscalar(self, vector1, vector2):
+        """
+        Parameters:
+         - vector1
+         - vector2
+
+        """
+        pass
+
 
 class Client(Iface):
     def __init__(self, iprot, oprot=None):
@@ -428,6 +447,76 @@ class Client(Iface):
             return result.success
         raise TApplicationException(TApplicationException.MISSING_RESULT, "convertirRadianesAGrados failed: unknown result")
 
+    def operacionesVectores(self, vector1, vector2, operacion):
+        """
+        Parameters:
+         - vector1
+         - vector2
+         - operacion
+
+        """
+        self.send_operacionesVectores(vector1, vector2, operacion)
+        return self.recv_operacionesVectores()
+
+    def send_operacionesVectores(self, vector1, vector2, operacion):
+        self._oprot.writeMessageBegin('operacionesVectores', TMessageType.CALL, self._seqid)
+        args = operacionesVectores_args()
+        args.vector1 = vector1
+        args.vector2 = vector2
+        args.operacion = operacion
+        args.write(self._oprot)
+        self._oprot.writeMessageEnd()
+        self._oprot.trans.flush()
+
+    def recv_operacionesVectores(self):
+        iprot = self._iprot
+        (fname, mtype, rseqid) = iprot.readMessageBegin()
+        if mtype == TMessageType.EXCEPTION:
+            x = TApplicationException()
+            x.read(iprot)
+            iprot.readMessageEnd()
+            raise x
+        result = operacionesVectores_result()
+        result.read(iprot)
+        iprot.readMessageEnd()
+        if result.success is not None:
+            return result.success
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "operacionesVectores failed: unknown result")
+
+    def productoEscalar(self, vector1, vector2):
+        """
+        Parameters:
+         - vector1
+         - vector2
+
+        """
+        self.send_productoEscalar(vector1, vector2)
+        return self.recv_productoEscalar()
+
+    def send_productoEscalar(self, vector1, vector2):
+        self._oprot.writeMessageBegin('productoEscalar', TMessageType.CALL, self._seqid)
+        args = productoEscalar_args()
+        args.vector1 = vector1
+        args.vector2 = vector2
+        args.write(self._oprot)
+        self._oprot.writeMessageEnd()
+        self._oprot.trans.flush()
+
+    def recv_productoEscalar(self):
+        iprot = self._iprot
+        (fname, mtype, rseqid) = iprot.readMessageBegin()
+        if mtype == TMessageType.EXCEPTION:
+            x = TApplicationException()
+            x.read(iprot)
+            iprot.readMessageEnd()
+            raise x
+        result = productoEscalar_result()
+        result.read(iprot)
+        iprot.readMessageEnd()
+        if result.success is not None:
+            return result.success
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "productoEscalar failed: unknown result")
+
 
 class Processor(Iface, TProcessor):
     def __init__(self, handler):
@@ -443,6 +532,8 @@ class Processor(Iface, TProcessor):
         self._processMap["tangente"] = Processor.process_tangente
         self._processMap["convertirGradosARadianes"] = Processor.process_convertirGradosARadianes
         self._processMap["convertirRadianesAGrados"] = Processor.process_convertirRadianesAGrados
+        self._processMap["operacionesVectores"] = Processor.process_operacionesVectores
+        self._processMap["productoEscalar"] = Processor.process_productoEscalar
         self._on_message_begin = None
 
     def on_message_begin(self, func):
@@ -694,6 +785,52 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.EXCEPTION
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
         oprot.writeMessageBegin("convertirRadianesAGrados", msg_type, seqid)
+        result.write(oprot)
+        oprot.writeMessageEnd()
+        oprot.trans.flush()
+
+    def process_operacionesVectores(self, seqid, iprot, oprot):
+        args = operacionesVectores_args()
+        args.read(iprot)
+        iprot.readMessageEnd()
+        result = operacionesVectores_result()
+        try:
+            result.success = self._handler.operacionesVectores(args.vector1, args.vector2, args.operacion)
+            msg_type = TMessageType.REPLY
+        except TTransport.TTransportException:
+            raise
+        except TApplicationException as ex:
+            logging.exception('TApplication exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = ex
+        except Exception:
+            logging.exception('Unexpected exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+        oprot.writeMessageBegin("operacionesVectores", msg_type, seqid)
+        result.write(oprot)
+        oprot.writeMessageEnd()
+        oprot.trans.flush()
+
+    def process_productoEscalar(self, seqid, iprot, oprot):
+        args = productoEscalar_args()
+        args.read(iprot)
+        iprot.readMessageEnd()
+        result = productoEscalar_result()
+        try:
+            result.success = self._handler.productoEscalar(args.vector1, args.vector2)
+            msg_type = TMessageType.REPLY
+        except TTransport.TTransportException:
+            raise
+        except TApplicationException as ex:
+            logging.exception('TApplication exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = ex
+        except Exception:
+            logging.exception('Unexpected exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+        oprot.writeMessageBegin("productoEscalar", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
@@ -1950,6 +2087,328 @@ class convertirRadianesAGrados_result(object):
         return not (self == other)
 all_structs.append(convertirRadianesAGrados_result)
 convertirRadianesAGrados_result.thrift_spec = (
+    (0, TType.DOUBLE, 'success', None, None, ),  # 0
+)
+
+
+class operacionesVectores_args(object):
+    """
+    Attributes:
+     - vector1
+     - vector2
+     - operacion
+
+    """
+
+
+    def __init__(self, vector1=None, vector2=None, operacion=None,):
+        self.vector1 = vector1
+        self.vector2 = vector2
+        self.operacion = operacion
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.LIST:
+                    self.vector1 = []
+                    (_etype3, _size0) = iprot.readListBegin()
+                    for _i4 in range(_size0):
+                        _elem5 = iprot.readDouble()
+                        self.vector1.append(_elem5)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.LIST:
+                    self.vector2 = []
+                    (_etype9, _size6) = iprot.readListBegin()
+                    for _i10 in range(_size6):
+                        _elem11 = iprot.readDouble()
+                        self.vector2.append(_elem11)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.STRING:
+                    self.operacion = iprot.readString().decode('utf-8', errors='replace') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('operacionesVectores_args')
+        if self.vector1 is not None:
+            oprot.writeFieldBegin('vector1', TType.LIST, 1)
+            oprot.writeListBegin(TType.DOUBLE, len(self.vector1))
+            for iter12 in self.vector1:
+                oprot.writeDouble(iter12)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.vector2 is not None:
+            oprot.writeFieldBegin('vector2', TType.LIST, 2)
+            oprot.writeListBegin(TType.DOUBLE, len(self.vector2))
+            for iter13 in self.vector2:
+                oprot.writeDouble(iter13)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.operacion is not None:
+            oprot.writeFieldBegin('operacion', TType.STRING, 3)
+            oprot.writeString(self.operacion.encode('utf-8') if sys.version_info[0] == 2 else self.operacion)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(operacionesVectores_args)
+operacionesVectores_args.thrift_spec = (
+    None,  # 0
+    (1, TType.LIST, 'vector1', (TType.DOUBLE, None, False), None, ),  # 1
+    (2, TType.LIST, 'vector2', (TType.DOUBLE, None, False), None, ),  # 2
+    (3, TType.STRING, 'operacion', 'UTF8', None, ),  # 3
+)
+
+
+class operacionesVectores_result(object):
+    """
+    Attributes:
+     - success
+
+    """
+
+
+    def __init__(self, success=None,):
+        self.success = success
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 0:
+                if ftype == TType.LIST:
+                    self.success = []
+                    (_etype17, _size14) = iprot.readListBegin()
+                    for _i18 in range(_size14):
+                        _elem19 = iprot.readDouble()
+                        self.success.append(_elem19)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('operacionesVectores_result')
+        if self.success is not None:
+            oprot.writeFieldBegin('success', TType.LIST, 0)
+            oprot.writeListBegin(TType.DOUBLE, len(self.success))
+            for iter20 in self.success:
+                oprot.writeDouble(iter20)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(operacionesVectores_result)
+operacionesVectores_result.thrift_spec = (
+    (0, TType.LIST, 'success', (TType.DOUBLE, None, False), None, ),  # 0
+)
+
+
+class productoEscalar_args(object):
+    """
+    Attributes:
+     - vector1
+     - vector2
+
+    """
+
+
+    def __init__(self, vector1=None, vector2=None,):
+        self.vector1 = vector1
+        self.vector2 = vector2
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.LIST:
+                    self.vector1 = []
+                    (_etype24, _size21) = iprot.readListBegin()
+                    for _i25 in range(_size21):
+                        _elem26 = iprot.readDouble()
+                        self.vector1.append(_elem26)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.LIST:
+                    self.vector2 = []
+                    (_etype30, _size27) = iprot.readListBegin()
+                    for _i31 in range(_size27):
+                        _elem32 = iprot.readDouble()
+                        self.vector2.append(_elem32)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('productoEscalar_args')
+        if self.vector1 is not None:
+            oprot.writeFieldBegin('vector1', TType.LIST, 1)
+            oprot.writeListBegin(TType.DOUBLE, len(self.vector1))
+            for iter33 in self.vector1:
+                oprot.writeDouble(iter33)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.vector2 is not None:
+            oprot.writeFieldBegin('vector2', TType.LIST, 2)
+            oprot.writeListBegin(TType.DOUBLE, len(self.vector2))
+            for iter34 in self.vector2:
+                oprot.writeDouble(iter34)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(productoEscalar_args)
+productoEscalar_args.thrift_spec = (
+    None,  # 0
+    (1, TType.LIST, 'vector1', (TType.DOUBLE, None, False), None, ),  # 1
+    (2, TType.LIST, 'vector2', (TType.DOUBLE, None, False), None, ),  # 2
+)
+
+
+class productoEscalar_result(object):
+    """
+    Attributes:
+     - success
+
+    """
+
+
+    def __init__(self, success=None,):
+        self.success = success
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 0:
+                if ftype == TType.DOUBLE:
+                    self.success = iprot.readDouble()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('productoEscalar_result')
+        if self.success is not None:
+            oprot.writeFieldBegin('success', TType.DOUBLE, 0)
+            oprot.writeDouble(self.success)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(productoEscalar_result)
+productoEscalar_result.thrift_spec = (
     (0, TType.DOUBLE, 'success', None, None, ),  # 0
 )
 fix_spec(all_structs)

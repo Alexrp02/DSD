@@ -159,9 +159,17 @@ CalculadoraCompleja_sumarVectores_args.prototype.write = function(output) {
 
 var CalculadoraCompleja_sumarVectores_result = function(args) {
   this.success = null;
+  this.e = null;
+  if (args instanceof ttypes.InvalidSize) {
+    this.e = args;
+    return;
+  }
   if (args) {
     if (args.success !== undefined && args.success !== null) {
       this.success = Thrift.copyList(args.success, [null]);
+    }
+    if (args.e !== undefined && args.e !== null) {
+      this.e = args.e;
     }
   }
 };
@@ -191,9 +199,14 @@ CalculadoraCompleja_sumarVectores_result.prototype.read = function(input) {
         input.skip(ftype);
       }
       break;
-      case 0:
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.e = new ttypes.InvalidSize();
+        this.e.read(input);
+      } else {
         input.skip(ftype);
-        break;
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -215,6 +228,11 @@ CalculadoraCompleja_sumarVectores_result.prototype.write = function(output) {
       }
     }
     output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.e !== null && this.e !== undefined) {
+    output.writeFieldBegin('e', Thrift.Type.STRUCT, 1);
+    this.e.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -317,9 +335,17 @@ CalculadoraCompleja_restarVectores_args.prototype.write = function(output) {
 
 var CalculadoraCompleja_restarVectores_result = function(args) {
   this.success = null;
+  this.e = null;
+  if (args instanceof ttypes.InvalidSize) {
+    this.e = args;
+    return;
+  }
   if (args) {
     if (args.success !== undefined && args.success !== null) {
       this.success = Thrift.copyList(args.success, [null]);
+    }
+    if (args.e !== undefined && args.e !== null) {
+      this.e = args.e;
     }
   }
 };
@@ -349,9 +375,14 @@ CalculadoraCompleja_restarVectores_result.prototype.read = function(input) {
         input.skip(ftype);
       }
       break;
-      case 0:
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.e = new ttypes.InvalidSize();
+        this.e.read(input);
+      } else {
         input.skip(ftype);
-        break;
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -373,6 +404,11 @@ CalculadoraCompleja_restarVectores_result.prototype.write = function(output) {
       }
     }
     output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.e !== null && this.e !== undefined) {
+    output.writeFieldBegin('e', Thrift.Type.STRUCT, 1);
+    this.e.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -475,9 +511,17 @@ CalculadoraCompleja_productoEscalar_args.prototype.write = function(output) {
 
 var CalculadoraCompleja_productoEscalar_result = function(args) {
   this.success = null;
+  this.e = null;
+  if (args instanceof ttypes.InvalidSize) {
+    this.e = args;
+    return;
+  }
   if (args) {
     if (args.success !== undefined && args.success !== null) {
-      this.success = Thrift.copyList(args.success, [null]);
+      this.success = args.success;
+    }
+    if (args.e !== undefined && args.e !== null) {
+      this.e = args.e;
     }
   }
 };
@@ -493,23 +537,20 @@ CalculadoraCompleja_productoEscalar_result.prototype.read = function(input) {
     }
     switch (fid) {
       case 0:
-      if (ftype == Thrift.Type.LIST) {
-        this.success = [];
-        var _rtmp341 = input.readListBegin();
-        var _size40 = _rtmp341.size || 0;
-        for (var _i42 = 0; _i42 < _size40; ++_i42) {
-          var elem43 = null;
-          elem43 = input.readDouble();
-          this.success.push(elem43);
-        }
-        input.readListEnd();
+      if (ftype == Thrift.Type.DOUBLE) {
+        this.success = input.readDouble();
       } else {
         input.skip(ftype);
       }
       break;
-      case 0:
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.e = new ttypes.InvalidSize();
+        this.e.read(input);
+      } else {
         input.skip(ftype);
-        break;
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -522,15 +563,13 @@ CalculadoraCompleja_productoEscalar_result.prototype.read = function(input) {
 CalculadoraCompleja_productoEscalar_result.prototype.write = function(output) {
   output.writeStructBegin('CalculadoraCompleja_productoEscalar_result');
   if (this.success !== null && this.success !== undefined) {
-    output.writeFieldBegin('success', Thrift.Type.LIST, 0);
-    output.writeListBegin(Thrift.Type.DOUBLE, this.success.length);
-    for (var iter44 in this.success) {
-      if (this.success.hasOwnProperty(iter44)) {
-        iter44 = this.success[iter44];
-        output.writeDouble(iter44);
-      }
-    }
-    output.writeListEnd();
+    output.writeFieldBegin('success', Thrift.Type.DOUBLE, 0);
+    output.writeDouble(this.success);
+    output.writeFieldEnd();
+  }
+  if (this.e !== null && this.e !== undefined) {
+    output.writeFieldBegin('e', Thrift.Type.STRUCT, 1);
+    this.e.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -564,12 +603,12 @@ CalculadoraCompleja_productoVectorial_args.prototype.read = function(input) {
       case 1:
       if (ftype == Thrift.Type.LIST) {
         this.vec1 = [];
-        var _rtmp346 = input.readListBegin();
-        var _size45 = _rtmp346.size || 0;
-        for (var _i47 = 0; _i47 < _size45; ++_i47) {
-          var elem48 = null;
-          elem48 = input.readDouble();
-          this.vec1.push(elem48);
+        var _rtmp341 = input.readListBegin();
+        var _size40 = _rtmp341.size || 0;
+        for (var _i42 = 0; _i42 < _size40; ++_i42) {
+          var elem43 = null;
+          elem43 = input.readDouble();
+          this.vec1.push(elem43);
         }
         input.readListEnd();
       } else {
@@ -579,12 +618,12 @@ CalculadoraCompleja_productoVectorial_args.prototype.read = function(input) {
       case 2:
       if (ftype == Thrift.Type.LIST) {
         this.vec2 = [];
-        var _rtmp350 = input.readListBegin();
-        var _size49 = _rtmp350.size || 0;
-        for (var _i51 = 0; _i51 < _size49; ++_i51) {
-          var elem52 = null;
-          elem52 = input.readDouble();
-          this.vec2.push(elem52);
+        var _rtmp345 = input.readListBegin();
+        var _size44 = _rtmp345.size || 0;
+        for (var _i46 = 0; _i46 < _size44; ++_i46) {
+          var elem47 = null;
+          elem47 = input.readDouble();
+          this.vec2.push(elem47);
         }
         input.readListEnd();
       } else {
@@ -605,10 +644,10 @@ CalculadoraCompleja_productoVectorial_args.prototype.write = function(output) {
   if (this.vec1 !== null && this.vec1 !== undefined) {
     output.writeFieldBegin('vec1', Thrift.Type.LIST, 1);
     output.writeListBegin(Thrift.Type.DOUBLE, this.vec1.length);
-    for (var iter53 in this.vec1) {
-      if (this.vec1.hasOwnProperty(iter53)) {
-        iter53 = this.vec1[iter53];
-        output.writeDouble(iter53);
+    for (var iter48 in this.vec1) {
+      if (this.vec1.hasOwnProperty(iter48)) {
+        iter48 = this.vec1[iter48];
+        output.writeDouble(iter48);
       }
     }
     output.writeListEnd();
@@ -617,10 +656,10 @@ CalculadoraCompleja_productoVectorial_args.prototype.write = function(output) {
   if (this.vec2 !== null && this.vec2 !== undefined) {
     output.writeFieldBegin('vec2', Thrift.Type.LIST, 2);
     output.writeListBegin(Thrift.Type.DOUBLE, this.vec2.length);
-    for (var iter54 in this.vec2) {
-      if (this.vec2.hasOwnProperty(iter54)) {
-        iter54 = this.vec2[iter54];
-        output.writeDouble(iter54);
+    for (var iter49 in this.vec2) {
+      if (this.vec2.hasOwnProperty(iter49)) {
+        iter49 = this.vec2[iter49];
+        output.writeDouble(iter49);
       }
     }
     output.writeListEnd();
@@ -633,9 +672,17 @@ CalculadoraCompleja_productoVectorial_args.prototype.write = function(output) {
 
 var CalculadoraCompleja_productoVectorial_result = function(args) {
   this.success = null;
+  this.e = null;
+  if (args instanceof ttypes.InvalidSize) {
+    this.e = args;
+    return;
+  }
   if (args) {
     if (args.success !== undefined && args.success !== null) {
       this.success = Thrift.copyList(args.success, [null]);
+    }
+    if (args.e !== undefined && args.e !== null) {
+      this.e = args.e;
     }
   }
 };
@@ -653,21 +700,26 @@ CalculadoraCompleja_productoVectorial_result.prototype.read = function(input) {
       case 0:
       if (ftype == Thrift.Type.LIST) {
         this.success = [];
-        var _rtmp356 = input.readListBegin();
-        var _size55 = _rtmp356.size || 0;
-        for (var _i57 = 0; _i57 < _size55; ++_i57) {
-          var elem58 = null;
-          elem58 = input.readDouble();
-          this.success.push(elem58);
+        var _rtmp351 = input.readListBegin();
+        var _size50 = _rtmp351.size || 0;
+        for (var _i52 = 0; _i52 < _size50; ++_i52) {
+          var elem53 = null;
+          elem53 = input.readDouble();
+          this.success.push(elem53);
         }
         input.readListEnd();
       } else {
         input.skip(ftype);
       }
       break;
-      case 0:
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.e = new ttypes.InvalidSize();
+        this.e.read(input);
+      } else {
         input.skip(ftype);
-        break;
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -682,13 +734,18 @@ CalculadoraCompleja_productoVectorial_result.prototype.write = function(output) 
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.LIST, 0);
     output.writeListBegin(Thrift.Type.DOUBLE, this.success.length);
-    for (var iter59 in this.success) {
-      if (this.success.hasOwnProperty(iter59)) {
-        iter59 = this.success[iter59];
-        output.writeDouble(iter59);
+    for (var iter54 in this.success) {
+      if (this.success.hasOwnProperty(iter54)) {
+        iter54 = this.success[iter54];
+        output.writeDouble(iter54);
       }
     }
     output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.e !== null && this.e !== undefined) {
+    output.writeFieldBegin('e', Thrift.Type.STRUCT, 1);
+    this.e.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -813,6 +870,9 @@ CalculadoraComplejaClient.prototype.recv_sumarVectores = function(input,mtype,rs
   result.read(input);
   input.readMessageEnd();
 
+  if (null !== result.e) {
+    return callback(result.e);
+  }
   if (null !== result.success) {
     return callback(null, result.success);
   }
@@ -873,6 +933,9 @@ CalculadoraComplejaClient.prototype.recv_restarVectores = function(input,mtype,r
   result.read(input);
   input.readMessageEnd();
 
+  if (null !== result.e) {
+    return callback(result.e);
+  }
   if (null !== result.success) {
     return callback(null, result.success);
   }
@@ -933,6 +996,9 @@ CalculadoraComplejaClient.prototype.recv_productoEscalar = function(input,mtype,
   result.read(input);
   input.readMessageEnd();
 
+  if (null !== result.e) {
+    return callback(result.e);
+  }
   if (null !== result.success) {
     return callback(null, result.success);
   }
@@ -993,6 +1059,9 @@ CalculadoraComplejaClient.prototype.recv_productoVectorial = function(input,mtyp
   result.read(input);
   input.readMessageEnd();
 
+  if (null !== result.e) {
+    return callback(result.e);
+  }
   if (null !== result.success) {
     return callback(null, result.success);
   }
@@ -1067,8 +1136,13 @@ CalculadoraComplejaProcessor.prototype.process_sumarVectores = function(seqid, i
       output.flush();
     }).catch(function (err) {
       var result;
-      result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
-      output.writeMessageBegin("sumarVectores", Thrift.MessageType.EXCEPTION, seqid);
+      if (err instanceof ttypes.InvalidSize) {
+        result = new CalculadoraCompleja_sumarVectores_result(err);
+        output.writeMessageBegin("sumarVectores", Thrift.MessageType.REPLY, seqid);
+      } else {
+        result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        output.writeMessageBegin("sumarVectores", Thrift.MessageType.EXCEPTION, seqid);
+      }
       result.write(output);
       output.writeMessageEnd();
       output.flush();
@@ -1076,7 +1150,7 @@ CalculadoraComplejaProcessor.prototype.process_sumarVectores = function(seqid, i
   } else {
     this._handler.sumarVectores(args.vec1, args.vec2, function (err, result) {
       var result_obj;
-      if ((err === null || typeof err === 'undefined')) {
+      if ((err === null || typeof err === 'undefined') || err instanceof ttypes.InvalidSize) {
         result_obj = new CalculadoraCompleja_sumarVectores_result((err !== null || typeof err === 'undefined') ? err : {success: result});
         output.writeMessageBegin("sumarVectores", Thrift.MessageType.REPLY, seqid);
       } else {
@@ -1105,8 +1179,13 @@ CalculadoraComplejaProcessor.prototype.process_restarVectores = function(seqid, 
       output.flush();
     }).catch(function (err) {
       var result;
-      result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
-      output.writeMessageBegin("restarVectores", Thrift.MessageType.EXCEPTION, seqid);
+      if (err instanceof ttypes.InvalidSize) {
+        result = new CalculadoraCompleja_restarVectores_result(err);
+        output.writeMessageBegin("restarVectores", Thrift.MessageType.REPLY, seqid);
+      } else {
+        result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        output.writeMessageBegin("restarVectores", Thrift.MessageType.EXCEPTION, seqid);
+      }
       result.write(output);
       output.writeMessageEnd();
       output.flush();
@@ -1114,7 +1193,7 @@ CalculadoraComplejaProcessor.prototype.process_restarVectores = function(seqid, 
   } else {
     this._handler.restarVectores(args.vec1, args.vec2, function (err, result) {
       var result_obj;
-      if ((err === null || typeof err === 'undefined')) {
+      if ((err === null || typeof err === 'undefined') || err instanceof ttypes.InvalidSize) {
         result_obj = new CalculadoraCompleja_restarVectores_result((err !== null || typeof err === 'undefined') ? err : {success: result});
         output.writeMessageBegin("restarVectores", Thrift.MessageType.REPLY, seqid);
       } else {
@@ -1143,8 +1222,13 @@ CalculadoraComplejaProcessor.prototype.process_productoEscalar = function(seqid,
       output.flush();
     }).catch(function (err) {
       var result;
-      result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
-      output.writeMessageBegin("productoEscalar", Thrift.MessageType.EXCEPTION, seqid);
+      if (err instanceof ttypes.InvalidSize) {
+        result = new CalculadoraCompleja_productoEscalar_result(err);
+        output.writeMessageBegin("productoEscalar", Thrift.MessageType.REPLY, seqid);
+      } else {
+        result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        output.writeMessageBegin("productoEscalar", Thrift.MessageType.EXCEPTION, seqid);
+      }
       result.write(output);
       output.writeMessageEnd();
       output.flush();
@@ -1152,7 +1236,7 @@ CalculadoraComplejaProcessor.prototype.process_productoEscalar = function(seqid,
   } else {
     this._handler.productoEscalar(args.vec1, args.vec2, function (err, result) {
       var result_obj;
-      if ((err === null || typeof err === 'undefined')) {
+      if ((err === null || typeof err === 'undefined') || err instanceof ttypes.InvalidSize) {
         result_obj = new CalculadoraCompleja_productoEscalar_result((err !== null || typeof err === 'undefined') ? err : {success: result});
         output.writeMessageBegin("productoEscalar", Thrift.MessageType.REPLY, seqid);
       } else {
@@ -1181,8 +1265,13 @@ CalculadoraComplejaProcessor.prototype.process_productoVectorial = function(seqi
       output.flush();
     }).catch(function (err) {
       var result;
-      result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
-      output.writeMessageBegin("productoVectorial", Thrift.MessageType.EXCEPTION, seqid);
+      if (err instanceof ttypes.InvalidSize) {
+        result = new CalculadoraCompleja_productoVectorial_result(err);
+        output.writeMessageBegin("productoVectorial", Thrift.MessageType.REPLY, seqid);
+      } else {
+        result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        output.writeMessageBegin("productoVectorial", Thrift.MessageType.EXCEPTION, seqid);
+      }
       result.write(output);
       output.writeMessageEnd();
       output.flush();
@@ -1190,7 +1279,7 @@ CalculadoraComplejaProcessor.prototype.process_productoVectorial = function(seqi
   } else {
     this._handler.productoVectorial(args.vec1, args.vec2, function (err, result) {
       var result_obj;
-      if ((err === null || typeof err === 'undefined')) {
+      if ((err === null || typeof err === 'undefined') || err instanceof ttypes.InvalidSize) {
         result_obj = new CalculadoraCompleja_productoVectorial_result((err !== null || typeof err === 'undefined') ? err : {success: result});
         output.writeMessageBegin("productoVectorial", Thrift.MessageType.REPLY, seqid);
       } else {

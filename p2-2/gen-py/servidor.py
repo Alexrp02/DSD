@@ -22,7 +22,7 @@ class CalculadoraHandler:
 
     def ping(self):
         print("me han hecho ping()")
-        print("haciendo ping al servidor en nodejs...");
+        print("haciendo ping al servidor en nodejs...")
         transport = TSocket.TSocket("localhost", 9091)
         transport = TTransport.TBufferedTransport(transport)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
@@ -31,6 +31,8 @@ class CalculadoraHandler:
         transport.open()
 
         client.ping()
+        result = client.sumarVectores([1, 2, 3], [4, 5, 6])
+        print(result)
 
         transport.close()
 
@@ -48,7 +50,7 @@ class CalculadoraHandler:
 
     def division(self, n1, n2):
         print("dividiendo " + str(n1) + " con " + str(n2))
-        if (n2 == 0):
+        if n2 == 0:
             print("Error, intentando dividir entre 0")
             raise Calculadora.InvalidOperation(1, "Division por cero")
         return n1 / n2
@@ -72,6 +74,45 @@ class CalculadoraHandler:
     def convertirRadianesAGrados(self, n1):
         print("convirtiendo " + str(n1) + " a grados")
         return math.degrees(n1)
+
+    def operacionesVectores(self, v1, v2, operacion):
+        transport = TSocket.TSocket("localhost", 9091)
+        transport = TTransport.TBufferedTransport(transport)
+        protocol = TBinaryProtocol.TBinaryProtocol(transport)
+
+        client = CalculadoraCompleja.Client(protocol)
+        try:
+            transport.open()
+
+            match (operacion):
+                case "+":
+                    print("sumando vectores " + str(v1) + " con " + str(v2))
+                    return client.sumarVectores(v1, v2)
+
+                case "-":
+                    print("restando vectores " + str(v1) + " con " + str(v2))
+                    return client.restarVectores(v1, v2)
+                case "x":
+                    print("multiplicando vectores " + str(v1) + " con " + str(v2))
+                    return client.productoVectorial(v1, v2)
+        finally:
+            transport.close()
+
+    def productoEscalar(self, v1, v2):
+        transport = TSocket.TSocket("localhost", 9091)
+        transport = TTransport.TBufferedTransport(transport)
+        protocol = TBinaryProtocol.TBinaryProtocol(transport)
+
+        client = CalculadoraCompleja.Client(protocol)
+        try:
+            transport.open()
+
+            print(
+                "calculando producto punto de vectores " + str(v1) + " con " + str(v2)
+            )
+            return client.productoEscalar(v1, v2)
+        finally:
+            transport.close()
 
 
 if __name__ == "__main__":
