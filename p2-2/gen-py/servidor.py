@@ -31,8 +31,6 @@ class CalculadoraHandler:
         transport.open()
 
         client.ping()
-        result = client.sumarVectores([1, 2, 3], [4, 5, 6])
-        print(result)
 
         transport.close()
 
@@ -95,6 +93,9 @@ class CalculadoraHandler:
                 case "x":
                     print("multiplicando vectores " + str(v1) + " con " + str(v2))
                     return client.productoVectorial(v1, v2)
+        except CalculadoraCompleja.InvalidSize as e:
+            print("Los vectores tienen tamaños distintos: " + e.message)
+            raise Calculadora.InvalidSize(e.message)
         finally:
             transport.close()
 
@@ -111,6 +112,9 @@ class CalculadoraHandler:
                 "calculando producto punto de vectores " + str(v1) + " con " + str(v2)
             )
             return client.productoEscalar(v1, v2)
+        except CalculadoraCompleja.InvalidSize as e:
+            print("Los vectores tienen tamaños distintos: " + e.message)
+            raise Calculadora.InvalidSize(e.message)
         finally:
             transport.close()
 

@@ -481,6 +481,8 @@ class Client(Iface):
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
+        if result.invalidSize is not None:
+            raise result.invalidSize
         raise TApplicationException(TApplicationException.MISSING_RESULT, "operacionesVectores failed: unknown result")
 
     def productoEscalar(self, vector1, vector2):
@@ -515,6 +517,8 @@ class Client(Iface):
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
+        if result.invalidSize is not None:
+            raise result.invalidSize
         raise TApplicationException(TApplicationException.MISSING_RESULT, "productoEscalar failed: unknown result")
 
 
@@ -799,6 +803,9 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
+        except InvalidSize as invalidSize:
+            msg_type = TMessageType.REPLY
+            result.invalidSize = invalidSize
         except TApplicationException as ex:
             logging.exception('TApplication exception in handler')
             msg_type = TMessageType.EXCEPTION
@@ -822,6 +829,9 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
+        except InvalidSize as invalidSize:
+            msg_type = TMessageType.REPLY
+            result.invalidSize = invalidSize
         except TApplicationException as ex:
             logging.exception('TApplication exception in handler')
             msg_type = TMessageType.EXCEPTION
@@ -2197,12 +2207,14 @@ class operacionesVectores_result(object):
     """
     Attributes:
      - success
+     - invalidSize
 
     """
 
 
-    def __init__(self, success=None,):
+    def __init__(self, success=None, invalidSize=None,):
         self.success = success
+        self.invalidSize = invalidSize
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -2223,6 +2235,11 @@ class operacionesVectores_result(object):
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
+            elif fid == 1:
+                if ftype == TType.STRUCT:
+                    self.invalidSize = InvalidSize.read(iprot)
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -2239,6 +2256,10 @@ class operacionesVectores_result(object):
             for iter20 in self.success:
                 oprot.writeDouble(iter20)
             oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.invalidSize is not None:
+            oprot.writeFieldBegin('invalidSize', TType.STRUCT, 1)
+            self.invalidSize.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -2259,6 +2280,7 @@ class operacionesVectores_result(object):
 all_structs.append(operacionesVectores_result)
 operacionesVectores_result.thrift_spec = (
     (0, TType.LIST, 'success', (TType.DOUBLE, None, False), None, ),  # 0
+    (1, TType.STRUCT, 'invalidSize', [InvalidSize, None], None, ),  # 1
 )
 
 
@@ -2356,12 +2378,14 @@ class productoEscalar_result(object):
     """
     Attributes:
      - success
+     - invalidSize
 
     """
 
 
-    def __init__(self, success=None,):
+    def __init__(self, success=None, invalidSize=None,):
         self.success = success
+        self.invalidSize = invalidSize
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -2377,6 +2401,11 @@ class productoEscalar_result(object):
                     self.success = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
+            elif fid == 1:
+                if ftype == TType.STRUCT:
+                    self.invalidSize = InvalidSize.read(iprot)
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -2390,6 +2419,10 @@ class productoEscalar_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.DOUBLE, 0)
             oprot.writeDouble(self.success)
+            oprot.writeFieldEnd()
+        if self.invalidSize is not None:
+            oprot.writeFieldBegin('invalidSize', TType.STRUCT, 1)
+            self.invalidSize.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -2410,6 +2443,7 @@ class productoEscalar_result(object):
 all_structs.append(productoEscalar_result)
 productoEscalar_result.thrift_spec = (
     (0, TType.DOUBLE, 'success', None, None, ),  # 0
+    (1, TType.STRUCT, 'invalidSize', [InvalidSize, None], None, ),  # 1
 )
 fix_spec(all_structs)
 del all_structs

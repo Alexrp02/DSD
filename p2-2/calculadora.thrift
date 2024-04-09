@@ -3,6 +3,10 @@ exception InvalidOperation {
    2: string message,
 }
 
+exception InvalidSize {
+		1: string message,
+}
+
 service Calculadora{
    void ping(),
    double suma(1:double num1, 2:double num2),
@@ -14,6 +18,6 @@ service Calculadora{
    double tangente(1:double num),
    double convertirGradosARadianes(1:double num),
    double convertirRadianesAGrados(1: double num),
-   list<double> operacionesVectores(1: list<double> vector1, 2: list<double> vector2, 3: string operacion),
-   double productoEscalar(1: list<double> vector1, 2: list<double> vector2),
+   list<double> operacionesVectores(1: list<double> vector1, 2: list<double> vector2, 3: string operacion) throws (1:InvalidSize invalidSize),
+   double productoEscalar(1: list<double> vector1, 2: list<double> vector2) throws (1:InvalidSize invalidSize),
 }
