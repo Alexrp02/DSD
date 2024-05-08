@@ -1,10 +1,11 @@
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 public interface IDonaciones extends Remote {
-    public void registrar(String entidad);
-    public void depositar(double cantidad);
-    public int getNumRegistrados ();
-
+    public IDonaciones registrar(String entidad) throws RemoteException;
+    public IDonaciones depositar(double cantidad, String entidad) throws  RemoteException;
+    public int getNumRegistrados () throws RemoteException ;
+    public boolean isRegistrado(String entidad) throws RemoteException;
 }
