@@ -9,3 +9,6 @@ p2-2/gen-py/calculadora_compleja/__pycache__
 p3/ej1/ejemplo1/src/Cliente_Ejemplo.class
 p3/ej1/ejemplo1/src/Ejemplo.class
 p3/ej1/ejemplo1/src/Ejemplo_I.class
+p2-2/gen-py/.pyenv
+p4/node_modules
+p4/package-lock.json
