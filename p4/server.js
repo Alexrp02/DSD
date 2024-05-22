@@ -1,14 +1,29 @@
 import http from 'node:http';
 import { Server } from 'socket.io';
 import { readFile } from 'node:fs';
-import { resolve } from 'node:path';
+import { join, resolve } from 'node:path';
+import Sensor from './src/sensor.js';
+
+function getPage(page, res) {
+
+	console.log(`Sirviendo página ${page}`);
+	readFile(join(process.cwd(), page), (err, data) => {
+		if (err) {
+			res.writeHead(404, { 'Content-Type': 'text/plain' });
+			return res.end(`404 - Not Found`);
+		}
+		res.writeHead(200, { 'Content-Type': 'text/html' });
+		res.end(data);
+	});
+}
+
 
 const httpServer = http.createServer((req, res) => {
 	let { url } = req;
 
 	switch (url) {
 		case '/':
-			res.end('Hello World');
+			getPage('/server/index.html', res);
 			break;
 		case '/socket.io/socket.io.js': // Serve Socket.IO client library
 			const filePath = resolve(__dirname, '../node_modules/socket.io/client-dist/socket.io.js');
@@ -21,8 +36,23 @@ const httpServer = http.createServer((req, res) => {
 				res.end(data);
 			});
 			break;
+		case '/setTemperatura':
+			sensorTemperatura.setValor(40);
+			res.end('Temperatura seteada');
+			break;
+		case '/prueba.html':
+			const filePath2 = resolve(__dirname, 'prueba.html');
+			readFile(filePath2, (err, data) => {
+				if (err) {
+					res.writeHead(500);
+					return res.end('Error loading prueba.html');
+				}
+				res.writeHead(200, { 'Content-Type': 'text/html' });
+				res.end(data);
+			});
+			break;
 		default:
-			res.end('404 Not Found');
+			getPage(url, res);
 			break;
 	}
 });
@@ -34,11 +64,13 @@ const io = new Server(httpServer, {
 }
 );
 
+const sensorTemperatura = new Sensor(io, 30, "temperatura");
+
 io.sockets.on('connection', (client) => {
 	console.log("Cliente conectado");
-	console.log(client.request.socket.remoteAddress);
-	console.log(client.request.socket.remotePort)
+	io.emit("alerta", "Un cliente se ha conectado");
 });
+
 
 httpServer.listen(3000);
 console.log("Servidor escuchando");
