@@ -23,7 +23,7 @@ const httpServer = http.createServer((req, res) => {
 
 	switch (url) {
 		case '/':
-			getPage('/server/index.html', res);
+			getPage('server/index.html', res);
 			break;
 		case '/socket.io/socket.io.js': // Serve Socket.IO client library
 			const filePath = resolve(__dirname, '../node_modules/socket.io/client-dist/socket.io.js');

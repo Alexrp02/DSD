@@ -1,0 +1,12 @@
+services:
+  servidor:
+    container_name: servidor-p4
+    build: 
+      context: .
+      dockerfile: ./Server.dockerfile
+    volumes:
+      - ./servidor/app:/app/src
+    entrypoint: nodemon server.js
+    ports:
+      - 3000:3000
+    
