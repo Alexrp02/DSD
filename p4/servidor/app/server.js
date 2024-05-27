@@ -63,12 +63,14 @@ const io = new Server(httpServer, {
 	}
 }
 );
+const sensores = [];
 
-const sensorTemperatura = new Sensor(io, 30, "temperatura");
+const sensorTemperatura = new Sensor(io, 30, "Temperatura");
+sensores.push(sensorTemperatura);
 
 io.sockets.on('connection', (client) => {
 	console.log("Cliente conectado");
-	io.emit("alerta", "Un cliente se ha conectado");
+	io.emit("sensores-list", sensores.map(sensor => sensor.tipo));
 });
 
 

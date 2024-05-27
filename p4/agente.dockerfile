@@ -2,7 +2,7 @@ FROM node
 
 WORKDIR /app
 
-COPY ./servidor/package.json .
+COPY ./agente/package.json .
 
 RUN npm install
 

@@ -10,7 +10,7 @@ class Sensor {
 		this.valor = valor;
 		if (valor > this.umbralAlto) {
 			console.log("Enviando alerta a los clientes");
-			this.socket.emit('alerta', 'Valor alto detectado en el sensor: ' + this.tipo);
+			this.socket.emit(`${this.tipo}-alerta`, 'Valor alto detectado en el sensor: ' + this.tipo);
 		}
 	}
 }
