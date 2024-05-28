@@ -1,28 +1,33 @@
 class Actuador {
-    constructor(socket, nombre, sensorAfectado, cambioActivado) {
-        this.socket = socket;
-        this.nombre = nombre;
-        this.activado = false;
-        this.sensorAfectado = sensorAfectado;
-        this.cambioActivado = cambioActivado;
+	constructor(socket, nombre, sensorAfectado, cambioActivado) {
+		this.socket = socket;
+		this.nombre = nombre;
+		this.activado = false;
+		this.sensorAfectado = sensorAfectado;
+		this.cambioActivado = cambioActivado;
 
-        this.socket.on(`${this.nombre}-toggle`, () => {
-            this.activado = !this.activado;
-            this.sensorAfectado.setValor(this.activado ? this.sensorAfectado + this.cambioActivado : this.sensorAfectado - this.cambioActivado);  
-        })
-    }
+	}
 
-    toggle() {
-        this.activado = !this.activado;
-        this.sensorAfectado.setValor(this.activado ? this.sensorAfectado + this.cambioActivado : this.sensorAfectado - this.cambioActivado);
-    }
+	addClient(client) {
+		console.log(`Creando actuador ${this.nombre}`);
+		client.on(this.nombre + "-toggle", (data) => {
+			console.log(`Actuador ${this.nombre} : ${this.activado ? "desactivado" : "activado"}`)
+			this.activado = !this.activado;
+			this.sensorAfectado.setValor(this.activado ? this.sensorAfectado.valor + this.cambioActivado : this.sensorAfectado.valor - this.cambioActivado);
+		})
+	}
 
-    toJSON() {
-        return {
-            nombre: this.nombre,
-            activado: this.activado
-        };
-    }
+	toggle() {
+		this.activado = !this.activado;
+		this.sensorAfectado.setValor(this.activado ? this.sensorAfectado.valor + this.cambioActivado : this.sensorAfectado.valor - this.cambioActivado);
+	}
+
+	toJSON() {
+		return {
+			nombre: this.nombre,
+			activado: this.activado
+		};
+	}
 }
 
 export default Actuador;

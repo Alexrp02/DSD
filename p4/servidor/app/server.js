@@ -48,7 +48,7 @@ const httpServer = http.createServer((req, res) => {
 			});
 			break;
 		case '/setTemperatura':
-			sensores[0].setValor(40);
+			sensores[0].setValor(35);
 			res.end('Temperatura seteada');
 			break;
 		case '/prueba.html':
@@ -81,20 +81,25 @@ MongoClient.connect("mongodb://database:27017/").then((db) => {
 	const sensorTemperatura = new Sensor(io, 30, "Temperatura", "ºC");
 	sensorTemperatura.setValor(25);
 
-	const aireAcondicionado = new Actuador(io, "Aire-acondicionado", sensorTemperatura, 15);
+	const aireAcondicionado = new Actuador(io, "Aire-acondicionado", sensorTemperatura, -15);
+	actuadores.push(aireAcondicionado);
 
 	const sensorLuminosidad = new Sensor(io, 100, "Luminosidad", "lm");
 	sensorLuminosidad.setValor(90);
 
 	const persiana = new Actuador(io, "Persiana", sensorLuminosidad, 20);
+	actuadores.push(persiana);
 
 	sensores.push(sensorTemperatura);
 	sensores.push(sensorLuminosidad);
 
 	io.sockets.on('connection', (client) => {
-		console.log("Cliente conectado");
+		for (let actuador of actuadores) {
+			actuador.addClient(client);
+		}
+		console.log("Cliente conectado, insertandolo en la base de datos");
 		connectionsCollection.insertOne({ fecha: new Date(), evento: "conexión", cliente: client.id });
-		console.log(connectionsCollection.find().toArray().then((data) => console.log(data)));
+		// console.log(connectionsCollection.find().toArray().then((data) => console.log(data)));
 		io.emit("sensores-list", sensores.map(function(sensor) { return sensor.toJSON(); }));
 	});
 
