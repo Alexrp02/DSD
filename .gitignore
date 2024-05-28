@@ -12,3 +12,5 @@ p3/ej1/ejemplo1/src/Ejemplo_I.class
 p2-2/gen-py/.pyenv
 p4/node_modules
 p4/package-lock.json
+p4/agente/node_modules
+p4/servidor/node_modules

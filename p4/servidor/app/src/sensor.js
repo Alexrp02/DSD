@@ -1,9 +1,10 @@
 class Sensor {
-	constructor(socket, umbralAlto, tipo) {
+	constructor(socket, umbralAlto, tipo, unidad) {
 		this.valor = 0;
 		this.socket = socket;
 		this.umbralAlto = umbralAlto;
 		this.tipo = tipo;
+		this.unidad = unidad;
 	}
 
 	setValor(valor) {
@@ -12,6 +13,14 @@ class Sensor {
 			console.log("Enviando alerta a los clientes");
 			this.socket.emit(`${this.tipo}-alerta`, 'Valor alto detectado en el sensor: ' + this.tipo);
 		}
+	}
+
+	toJSON() {
+		return {
+			valor: this.valor,
+			tipo: this.tipo,
+			unidad: this.unidad
+		};
 	}
 }
 

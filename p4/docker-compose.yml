@@ -9,6 +9,8 @@ services:
     entrypoint: nodemon server.js
     ports:
       - 3000:3000
+    depends_on:
+      - database
   agente:
     depends_on:
       - servidor
@@ -21,3 +23,6 @@ services:
     entrypoint: nodemon agente.js
     ports:
       - 3001:3001
+  database:
+    container_name: database-p4
+    image: mongo

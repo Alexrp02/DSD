@@ -3,6 +3,8 @@ import { Server } from 'socket.io';
 import { readFile } from 'node:fs';
 import { join, resolve } from 'node:path';
 import Sensor from './src/sensor.js';
+import Actuador from './src/actuador.js';
+import { MongoClient } from "mongodb";
 
 function getPage(page, res) {
 
@@ -12,12 +14,21 @@ function getPage(page, res) {
 			res.writeHead(404, { 'Content-Type': 'text/plain' });
 			return res.end(`404 - Not Found`);
 		}
-		res.writeHead(200, { 'Content-Type': 'text/html' });
+		if (page.endsWith('.html'))
+			res.writeHead(200, { 'Content-Type': 'text/html' });
+		else if (page.endsWith('.js'))
+			res.writeHead(200, { 'Content-Type': 'application/javascript' });
+		else if (page.endsWith('.css'))
+			res.writeHead(200, { 'Content-Type': 'text/css' });
+		else
+			res.writeHead(200, { 'Content-Type': 'text/html' });
 		res.end(data);
 	});
 }
 
 
+const sensores = [];
+const actuadores = [];
 const httpServer = http.createServer((req, res) => {
 	let { url } = req;
 
@@ -37,7 +48,7 @@ const httpServer = http.createServer((req, res) => {
 			});
 			break;
 		case '/setTemperatura':
-			sensorTemperatura.setValor(40);
+			sensores[0].setValor(40);
 			res.end('Temperatura seteada');
 			break;
 		case '/prueba.html':
@@ -57,22 +68,38 @@ const httpServer = http.createServer((req, res) => {
 	}
 });
 
-const io = new Server(httpServer, {
-	cors: {
-		origin: '*',
+MongoClient.connect("mongodb://database:27017/").then((db) => {
+	const dbo = db.db("eventos-sensores");
+	const connectionsCollection = dbo.collection("connections");
+	const io = new Server(httpServer, {
+		cors: {
+			origin: '*',
+		}
 	}
-}
-);
-const sensores = [];
+	);
 
-const sensorTemperatura = new Sensor(io, 30, "Temperatura");
-sensores.push(sensorTemperatura);
+	const sensorTemperatura = new Sensor(io, 30, "Temperatura", "ºC");
+	sensorTemperatura.setValor(25);
 
-io.sockets.on('connection', (client) => {
-	console.log("Cliente conectado");
-	io.emit("sensores-list", sensores.map(sensor => sensor.tipo));
-});
+	const aireAcondicionado = new Actuador(io, "Aire-acondicionado", sensorTemperatura, 15);
+
+	const sensorLuminosidad = new Sensor(io, 100, "Luminosidad", "lm");
+	sensorLuminosidad.setValor(90);
+
+	const persiana = new Actuador(io, "Persiana", sensorLuminosidad, 20);
+
+	sensores.push(sensorTemperatura);
+	sensores.push(sensorLuminosidad);
+
+	io.sockets.on('connection', (client) => {
+		console.log("Cliente conectado");
+		connectionsCollection.insertOne({ fecha: new Date(), evento: "conexión", cliente: client.id });
+		console.log(connectionsCollection.find().toArray().then((data) => console.log(data)));
+		io.emit("sensores-list", sensores.map(function(sensor) { return sensor.toJSON(); }));
+	});
 
 
-httpServer.listen(3000);
-console.log("Servidor escuchando");
+	httpServer.listen(3000);
+	console.log("Servidor escuchando");
+})
+
