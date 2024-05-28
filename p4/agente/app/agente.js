@@ -2,26 +2,17 @@ import { io } from 'socket.io-client';
 
 const socket = io('http://servidor:3000');
 let sensores = [];
+let actuadores = [];
 
-
-socket.on('sensores-list', (data) => {
-	console.log("Emitiendo persiana");
-	socket.emit("Persiana-toggle", {});
-	for (let sensorAntiguo of sensores) {
-		socket.removeAllListeners(`${sensorAntiguo.tipo}-alerta`);
-
+socket.on('actuadores-list', (data) => {
+	for (let actuadorAntiguo of actuadores) {
+		socket.removeAllListeners(`${actuadorAntiguo.sensorAfectado.tipo}-alerta`);
 	}
-	sensores = data;
 
-	for (let sensor of sensores) {
-		socket.on(`${sensor.tipo}-alerta`, (data) => {
-			if (sensor.tipo == "Temperatura") {
-				console.log("Alerta en el sensor " + sensor.tipo + ": " + data + ", activando actuador");
-				socket.emit('Aire-acondicionado-toggle', {});
-			}
+	for (let actuador of data) {
+		socket.on(`${actuador.sensorAfectado.tipo}-alerta`, (data) => {
+			console.log("Alerta en el sensor " + actuador.sensorAfectado.tipo + ": " + data["isAlto"] + ", activando actuador");
+			socket.emit(`${actuador.nombre}-toggle`, data["isAlto"]);
 		});
 	}
-
-	console.log(sensores);
 });
-

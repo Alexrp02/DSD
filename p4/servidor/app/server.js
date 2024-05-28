@@ -26,6 +26,17 @@ function getPage(page, res) {
 	});
 }
 
+function getObjectFromBody(bodyText) {
+	const body = bodyText.split('&');
+	const obj = {};
+	for (let i = 0; i < body.length; i++) {
+		const key = body[i].split('=')[0];
+		const value = body[i].split('=')[1];
+		obj[key] = value;
+	}
+	return obj;
+}
+
 
 const sensores = [];
 const actuadores = [];
@@ -51,6 +62,38 @@ const httpServer = http.createServer((req, res) => {
 			sensores[0].setValor(35);
 			res.end('Temperatura seteada');
 			break;
+		case '/setters':
+			getPage('server/setters.html', res);
+			break;
+		case '/set':
+			// console log the request post body
+			let body = '';
+			req.on('data', chunk => {
+				body += chunk.toString();
+			});
+			req.on('end', () => {
+				console.log(body);
+				const bodyObj = getObjectFromBody(body);
+				for (let sensor of sensores) {
+					if(sensor.tipo == bodyObj.sensor) {
+						console.log(`Seteando sensor ${sensor.tipo} a ${bodyObj.valor}`)
+						let modificador = 0;
+						for (let actuador of actuadores) {
+							if(actuador.sensorAfectado.tipo == sensor.tipo && actuador.activado && bodyObj.valor > sensor.umbralBajo) {
+								modificador += actuador.cambioActivado;
+							}
+						}
+						sensor.setValor(parseInt(bodyObj.valor) + modificador);
+					}
+				}
+				// Redirect to the previous page
+				const referer = req.headers.referer;
+				res.writeHead(302, {
+					'Location': referer
+				});
+				res.end();
+			});
+			break;
 		case '/prueba.html':
 			const filePath2 = resolve(__dirname, 'prueba.html');
 			readFile(filePath2, (err, data) => {
@@ -71,6 +114,7 @@ const httpServer = http.createServer((req, res) => {
 MongoClient.connect("mongodb://database:27017/").then((db) => {
 	const dbo = db.db("eventos-sensores");
 	const connectionsCollection = dbo.collection("connections");
+	const cambiosSensoresCollection = dbo.collection("cambios-sensores");
 	const io = new Server(httpServer, {
 		cors: {
 			origin: '*',
@@ -78,16 +122,16 @@ MongoClient.connect("mongodb://database:27017/").then((db) => {
 	}
 	);
 
-	const sensorTemperatura = new Sensor(io, 30, "Temperatura", "ºC");
+	const sensorTemperatura = new Sensor(io, 10, 30, "Temperatura", "ºC", cambiosSensoresCollection);
 	sensorTemperatura.setValor(25);
 
 	const aireAcondicionado = new Actuador(io, "Aire-acondicionado", sensorTemperatura, -15);
 	actuadores.push(aireAcondicionado);
 
-	const sensorLuminosidad = new Sensor(io, 100, "Luminosidad", "lm");
+	const sensorLuminosidad = new Sensor(io, 0, 100, "Luminosidad", "lm", cambiosSensoresCollection);
 	sensorLuminosidad.setValor(90);
 
-	const persiana = new Actuador(io, "Persiana", sensorLuminosidad, 20);
+	const persiana = new Actuador(io, "Persiana", sensorLuminosidad, -20);
 	actuadores.push(persiana);
 
 	sensores.push(sensorTemperatura);
@@ -101,6 +145,7 @@ MongoClient.connect("mongodb://database:27017/").then((db) => {
 		connectionsCollection.insertOne({ fecha: new Date(), evento: "conexión", cliente: client.id });
 		// console.log(connectionsCollection.find().toArray().then((data) => console.log(data)));
 		io.emit("sensores-list", sensores.map(function(sensor) { return sensor.toJSON(); }));
+		io.emit("actuadores-list", actuadores.map(function(actuador) { return actuador.toJSON(); }));
 	});
 
 

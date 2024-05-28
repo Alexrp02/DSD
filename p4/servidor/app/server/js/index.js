@@ -20,3 +20,36 @@ io.on("sensores-list", function(data) {
 		});
 	}
 });
+
+io.on("actuadores-list", function(data) {
+	console.log("Creando listeners para los actuadores:")
+	console.log(data);
+	let contentActuadores = document.getElementById("actuadores-content");
+	contentActuadores.innerHTML = "";
+	for (let actuador of data) {
+		let actuadorDiv = document.createElement("div");
+		actuadorDiv.className = "actuador";
+		actuadorDiv.innerHTML = `<h2>Actuador ${actuador.nombre}</h2>`;
+		let valorActuador = document.createElement("p");
+		valorActuador.id = `${actuador.nombre}-value`;
+		valorActuador.innerHTML = `Activado: ${actuador.activado ? "Sí" : "No"}`;
+		valorActuador.dataset.estado = actuador.activado;
+		actuadorDiv.appendChild(valorActuador);
+		let toggleButton = document.createElement("button");
+		toggleButton.innerHTML = "Cambiar";
+		toggleButton.onclick = function() {
+			let newValue = valorActuador.dataset.estado == "true" ? false : true;
+			io.emit(`${actuador.nombre}-toggle`, newValue);
+			valorActuador.dataset.estado = newValue;
+			console.log(newValue)
+			valorActuador.innerHTML = `Activado: ${newValue ? "Sí" : "No"}`;
+		}
+		actuadorDiv.appendChild(toggleButton);
+		contentActuadores.appendChild(actuadorDiv);
+		io.on(`${actuador.nombre}-toggle`, function(data) {
+			console.log("Cambio en el actuador " + actuador.nombre + ": " + data);
+			let valorActuador = document.getElementById(`${actuador.nombre}-value`);
+			valorActuador.innerHTML = `Activado: ${data ? "Sí" : "No"}`;
+		});
+	}
+});
