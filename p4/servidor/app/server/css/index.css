@@ -1,5 +1,4 @@
 html {
-	height: 100vh;
 	font-family: 'Roboto', sans-serif;
 }
 
@@ -9,17 +8,22 @@ body {
 	background-color: #F9F3ED;
 }
 
-#content {
+#info {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-around;
 	align-items: center;
 	height: 100%;
+	margin-top: 32px;
 }
 
-#content>div {
+#info>div {
 	border: 1px solid black;
 	background-color: white;
 	padding: 16px;
 	border-radius: 8px;
+}
+
+#database {
+	margin: 32px;
 }

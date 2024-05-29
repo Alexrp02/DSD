@@ -123,13 +123,13 @@ MongoClient.connect("mongodb://database:27017/").then((db) => {
 	);
 
 	const sensorTemperatura = new Sensor(io, 10, 30, "Temperatura", "ºC", cambiosSensoresCollection);
-	sensorTemperatura.setValor(25);
+	sensorTemperatura.valor = 25;
 
 	const aireAcondicionado = new Actuador(io, "Aire-acondicionado", sensorTemperatura, -15);
 	actuadores.push(aireAcondicionado);
 
 	const sensorLuminosidad = new Sensor(io, 0, 100, "Luminosidad", "lm", cambiosSensoresCollection);
-	sensorLuminosidad.setValor(90);
+	sensorLuminosidad.valor = 90;
 
 	const persiana = new Actuador(io, "Persiana", sensorLuminosidad, -20);
 	actuadores.push(persiana);
@@ -144,8 +144,12 @@ MongoClient.connect("mongodb://database:27017/").then((db) => {
 		console.log("Cliente conectado, insertandolo en la base de datos");
 		connectionsCollection.insertOne({ fecha: new Date(), evento: "conexión", cliente: client.id });
 		// console.log(connectionsCollection.find().toArray().then((data) => console.log(data)));
-		io.emit("sensores-list", sensores.map(function(sensor) { return sensor.toJSON(); }));
-		io.emit("actuadores-list", actuadores.map(function(actuador) { return actuador.toJSON(); }));
+		client.emit("sensores-list", sensores.map(function(sensor) { return sensor.toJSON(); }));
+		client.emit("actuadores-list", actuadores.map(function(actuador) { return actuador.toJSON(); }));
+		client.on("agente-alert", function(data) {
+			io.emit("agente-alert", data);
+		})
+		cambiosSensoresCollection.find({}).toArray().then((data) => io.emit("database-info", data));
 	});
 
 

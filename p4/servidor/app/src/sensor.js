@@ -14,9 +14,9 @@ class Sensor {
 			sensor: this.tipo,
 			valorAnterior: this.valor,
 			nuevoValor: valor,
-			fecha: new Date()
+			fecha: new Date().toLocaleString()
 		}).then(() => {
-			console.log(this.dbCollection.find({}).toArray().then((data) => console.log(data)));
+			this.dbCollection.find({}).toArray().then((data) => this.socket.emit("database-info", data));
 		});
 		this.valor = valor;
 		if (valor > this.umbralAlto) {
